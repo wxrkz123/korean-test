@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TOPIK 阅读刷题本</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one exam column like the booklet (max 46rem), a sticky answer bar on top,
+   a question-number sheet beside it on wide screens; the dictionary floats over the text. */
+:root{
+  --paper:#f3f4f7; --sheet:#ffffff; --ink:#1b2130; --muted:#5b6475; --line:#dcdfe6; --soft:#eef0f4;
+  --accent:#2b4fbf; --accent-ink:#ffffff; --accent-soft:#e7ecfb;
+  --ok:#17805a; --ok-bg:#e3f3eb; --bad:#c23a30; --bad-bg:#fbe8e6;
+  --mark:#ffe26a; --mark-soft:#fff4bf; --shadow:0 10px 30px rgba(22,30,50,.16);
+  --f-ko:"Noto Serif KR","Nanum Myeongjo","AppleMyungjo","Batang",serif;
+  --f-ui:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#111419; --sheet:#191d25; --ink:#e5e8ee; --muted:#9ba4b4; --line:#2d333e; --soft:#222732;
+  --accent:#8ba5ff; --accent-ink:#0d1220; --accent-soft:#232c48;
+  --ok:#52c48f; --ok-bg:rgba(82,196,143,.15); --bad:#ff7c70; --bad-bg:rgba(255,124,112,.15);
+  --mark:rgba(255,214,10,.38); --mark-soft:rgba(255,214,10,.17); --shadow:0 12px 34px rgba(0,0,0,.5); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#111419; --sheet:#191d25; --ink:#e5e8ee; --muted:#9ba4b4; --line:#2d333e; --soft:#222732;
+  --accent:#8ba5ff; --accent-ink:#0d1220; --accent-soft:#232c48;
+  --ok:#52c48f; --ok-bg:rgba(82,196,143,.15); --bad:#ff7c70; --bad-bg:rgba(255,124,112,.15);
+  --mark:rgba(255,214,10,.38); --mark-soft:rgba(255,214,10,.17); --shadow:0 12px 34px rgba(0,0,0,.5); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+img{max-width:100%}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.6;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--sheet)}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:72rem;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--sheet);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:12px;min-height:52px;flex-wrap:wrap;padding-block:6px}
+.brand{font-weight:700;text-decoration:none;color:var(--ink);font-size:16px;letter-spacing:.01em;white-space:nowrap}
+.brand .ko{font-family:var(--f-ko);color:var(--accent)}
+.nav{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.nav a{text-decoration:none;color:var(--muted);padding:6px 10px;border-radius:8px;font-size:14px;white-space:nowrap}
+.nav a[aria-current="page"]{color:var(--ink);background:var(--soft);font-weight:500}
+.nav .n{font-family:var(--f-num);font-size:12px;margin-left:3px;color:var(--muted)}
+main{padding-block:20px 64px}
+h1{font-size:clamp(24px,4vw,32px);line-height:1.25;margin:0 0 8px;text-wrap:balance}
+h2{font-size:18px;margin:0 0 12px;text-wrap:balance}
+.muted{color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--sheet);cursor:pointer;text-decoration:none;color:var(--ink);font-size:14px;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:500}
+.btn.ghost{background:transparent}
+.btn.sm{min-height:32px;padding:0 10px;font-size:13px}
+.btn[disabled]{opacity:.45;cursor:default}
+/* home */
+.intro{display:grid;gap:14px;margin-bottom:28px;max-width:46rem}
+.intro p{margin:0}
+.demo{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:6px}
+.demo .ex{font-family:var(--f-ko);font-size:18px;line-height:1.9}
+.omr{font-family:var(--f-ko);letter-spacing:.2em;color:var(--muted)}
+.sync{font-size:13px;color:var(--muted)}
+.list{display:grid;gap:10px;max-width:46rem}
+.exam{display:grid;grid-template-columns:auto 1fr auto;gap:6px 16px;align-items:center;background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.exam .t{font-weight:700;font-size:17px;white-space:nowrap}
+.exam .t small{display:block;font-weight:400;font-size:12px;color:var(--muted);font-family:var(--f-ko)}
+.exam .meter{min-width:0}
+.track{height:8px;border-radius:99px;background:var(--soft);overflow:hidden;display:flex}
+.track i{display:block;height:100%}
+.track .g{background:var(--ok)} .track .r{background:var(--bad)}
+.exam .stat{font-size:13px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
+.exam .acts{display:flex;gap:6px}
+@media (max-width:560px){.exam{grid-template-columns:1fr auto}.exam .meter{grid-column:1/-1;order:3}}
+/* exam view */
+.xgrid{display:grid;grid-template-columns:minmax(0,46rem) 15rem;gap:24px;align-items:start}
+@media (max-width:1000px){.xgrid{grid-template-columns:minmax(0,1fr)}.side{order:-1}}
+.xhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.xhead .ttl{font-weight:700;font-size:17px}
+.xhead .ttl span{font-family:var(--f-ko);font-weight:600;color:var(--muted);font-size:14px;margin-left:6px}
+.xhead .score{margin-left:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.card{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:22px clamp(16px,3vw,28px);display:grid;gap:16px;min-width:0}
+.ins{font-family:var(--f-ko);font-weight:700;font-size:16px;line-height:1.7}
+.ko{font-family:var(--f-ko);font-size:18px;line-height:1.95;word-break:keep-all;overflow-wrap:anywhere}
+.ko p{margin:0}
+.ko p+p{margin-top:.35em}
+.passage{border:1px solid var(--ink);border-radius:2px;padding:14px 18px}
+.passage p{text-indent:1em}
+.undisc{border:1px dashed var(--muted);border-radius:6px;padding:16px;text-align:center;font-size:15px;line-height:1.7;color:var(--muted)}
+.undisc b{font-family:var(--f-ko);color:var(--ink)}
+.qline{display:flex;gap:6px;align-items:baseline}
+.qn{font-family:var(--f-ko);font-weight:700;font-size:18px;white-space:nowrap}
+.boxed{border:1px solid var(--ink);padding:10px 16px;border-radius:2px}
+.bogi{text-align:center;font-family:var(--f-ko);font-size:14px;color:var(--muted);margin-bottom:2px}
+.poster{border:2px solid var(--line);border-radius:12px;padding:16px 20px;background:linear-gradient(180deg,var(--soft),var(--sheet));text-align:center}
+.poster p.li{text-align:left}
+.poster p:first-child{font-weight:700}
+.chart{background:#fff;border-radius:10px;padding:8px;border:1px solid var(--line);max-width:100%}
+.chart img{display:block;width:100%;height:auto}
+.opts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;background:transparent;border:1px solid transparent;border-radius:10px;padding:8px 10px;cursor:pointer}
+.opt:hover{background:var(--soft)}
+.opt .ko{font-size:17px;line-height:1.8;min-width:0}
+.bub{flex:none;width:30px;height:30px;margin-top:2px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-family:var(--f-num);font-size:14px;font-weight:500;background:var(--sheet)}
+.opt.chosen .bub{background:var(--ink);color:var(--sheet)}
+.opt.right{background:var(--ok-bg);border-color:var(--ok)}
+.opt.right .bub{border-color:var(--ok);background:var(--ok);color:var(--sheet)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.opt.wrong .bub{border-color:var(--bad);background:var(--bad);color:var(--sheet)}
+.answered .opt{cursor:default}
+.answered .opt:hover{background:transparent}
+.answered .opt.right:hover{background:var(--ok-bg)} .answered .opt.wrong:hover{background:var(--bad-bg)}
+.fb{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:500;padding:10px 14px;border-radius:10px}
+.fb.ok{background:var(--ok-bg);color:var(--ok)} .fb.bad{background:var(--bad-bg);color:var(--bad)}
+.fb .btn{margin-left:auto}
+.hint{font-size:13px;color:var(--muted)}
+.qnav{display:flex;gap:10px;justify-content:space-between;align-items:center}
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:10px}
+.side .lbl{font-size:12px;color:var(--muted);letter-spacing:.06em}
+.cells{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.cells button{aspect-ratio:1;min-width:0;border:1px solid var(--line);background:var(--sheet);border-radius:6px;font-family:var(--f-num);font-size:11px;cursor:pointer;padding:0;color:var(--muted)}
+.cells .ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.cells .bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.cells .skip{border-style:dashed;opacity:.5}
+.cells .cur{outline:2px solid var(--accent);outline-offset:1px;color:var(--ink)}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px;border:1px solid var(--line)}
+@media (max-width:1000px){.side{position:static}.side.fold .cells,.side.fold .legend{display:none}}
+.sidebar-toggle{display:none}
+@media (max-width:1000px){.sidebar-toggle{display:inline-flex}}
+/* words */
+.w{cursor:help;border-radius:3px;transition:background-color .12s}
+@media (hover:hover){.w:hover{background:var(--accent-soft)}}
+.w.saved{background:var(--mark-soft);box-shadow:inset 0 -.32em 0 var(--mark)}
+.w.on{background:var(--accent-soft)}
+.ul{text-decoration:underline;text-underline-offset:.28em;text-decoration-thickness:1px}
+.blank{white-space:nowrap}
+.gap{display:inline-block;width:5.5em}
+.mk{font-weight:600;white-space:nowrap}
+/* popover */
+.pop{position:absolute;z-index:40;width:min(23rem,calc(100vw - 24px));background:var(--sheet);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:12px 14px;display:grid;gap:10px;font-size:14px}
+.pop.sheet{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;border-radius:16px 16px 0 0;max-height:70vh;overflow:auto;padding:14px max(18px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px))}
+.pop .hd{display:flex;align-items:center;gap:8px}
+.pop .sf{font-family:var(--f-ko);font-size:15px;color:var(--muted)}
+.pop .x{margin-left:auto;border:0;background:var(--soft);border-radius:8px;width:30px;height:30px;cursor:pointer}
+.pop .row{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:start}
+.pop .lem{font-family:var(--f-ko);font-size:19px;font-weight:600;line-height:1.4}
+.pop .zh{grid-column:1;font-size:15px;line-height:1.5}
+.pop .star{grid-row:1/3;grid-column:2;border:1px solid var(--line);background:var(--sheet);border-radius:8px;padding:4px 8px;font-size:12px;cursor:pointer;white-space:nowrap;align-self:center}
+.pop .star.on{background:var(--mark-soft);border-color:var(--mark)}
+.pop .sec{border-top:1px solid var(--line);padding-top:8px;display:grid;gap:8px}
+.pop .sh{font-size:11px;letter-spacing:.1em;color:var(--muted)}
+.pop .gl{font-family:var(--f-ko);font-weight:600;font-size:16px}
+.pop .ft{display:flex;gap:12px;font-size:13px}
+/* lists */
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.toolbar .grow{flex:1}
+.vlist{display:grid;gap:10px;max-width:46rem}
+.vitem{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:1fr auto;gap:4px 12px}
+.vitem .k{font-family:var(--f-ko);font-size:20px;font-weight:600}
+.vitem .k .ty{font-family:var(--f-ui);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px;margin-left:8px;vertical-align:3px}
+.vitem .zh{grid-column:1;font-size:15px}
+.hidezh .vitem .zh{color:transparent;background:var(--soft);border-radius:6px;cursor:pointer;user-select:none}
+.hidezh .vitem .zh.show{color:inherit;background:transparent}
+.vitem .cx{grid-column:1/-1;font-family:var(--f-ko);font-size:14px;color:var(--muted);line-height:1.7}
+.vitem .cx b{color:var(--ink);font-weight:600;background:var(--mark-soft)}
+.vitem .src{grid-column:1/-1;font-size:12px;color:var(--muted)}
+.vitem .del{grid-row:1/3;grid-column:2;align-self:start}
+.empty{background:var(--sheet);border:1px dashed var(--line);border-radius:12px;padding:28px 20px;text-align:center;color:var(--muted);max-width:46rem}
+.wl{display:grid;gap:8px;max-width:46rem}
+.witem{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center}
+.witem .meta{font-size:13px;color:var(--muted)}
+.witem .sn{font-family:var(--f-ko);font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res{display:grid;gap:14px}
+.big{font-family:var(--f-num);font-size:44px;line-height:1;font-weight:500}
+.copybox{width:100%;min-height:8rem;font-family:var(--f-ko);font-size:14px;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--sheet);color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:8px 16px;border-radius:99px;font-size:14px;z-index:50;box-shadow:var(--shadow)}
+.loading{padding:40px 0;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#home">TOPIK <span class="ko">읽기</span> 刷题本</a>
+    <nav class="nav" aria-label="主导航">
+      <a href="#home" data-nav="home">真题</a>
+      <a href="#wrong" data-nav="wrong">错题本<span class="n" id="nWrong"></span></a>
+      <a href="#vocab" data-nav="vocab">生词本<span class="n" id="nVocab"></span></a>
+    </nav>
+  </div>
+</header>
+<main class="wrap" id="view"><p class="loading">载入题库…</p></main>
+<div class="pop" id="pop" role="dialog" aria-label="单词释义" hidden></div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(() => {
+'use strict';
+const ORDER = [64, 83, 91, 96, 102];
+const CIRC = ['①', '②', '③', '④'];
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const touch = window.matchMedia('(hover: none)').matches;
+let INDEX = null, DICT = null;
+const EX = {};
+
+/* ---------------- storage: browser first, private account copy when available ---------------- */
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage blocked */ } }
+};
+const S = { progress: LS.get('topik.progress', {}), vocab: LS.get('topik.vocab', {}), pos: LS.get('topik.pos', {}) };
+let remote = null, syncState = 'local';
+const wq = { progress: { busy: false, dirty: false, timer: 0 }, vocab: { busy: false, dirty: false, timer: 0 } };
+function mergeItems(a, b) { const o = Object.assign({}, a); for (const k in b) { if (!o[k] || (b[k] && (b[k].t || 0) > (o[k].t || 0))) o[k] = b[k]; } return o; }
+function pruneVocab(v) { const cut = Date.now() - 60 * 864e5; for (const k in v) if (v[k] && v[k].d && v[k].t < cut) delete v[k]; return v; }
+function persist(name) { LS.set('topik.' + name, S[name]); if (remote) { const q = wq[name]; clearTimeout(q.timer); q.timer = setTimeout(() => flush(name), 1200); } }
+async function flush(name) {
+  const q = wq[name]; if (!remote) return;
+  if (q.busy) { q.dirty = true; return; }
+  q.busy = true;
+  try { await remote.refs[name].set({ items: S[name], v: 1 }); }
+  catch (e) {
+    q.busy = false;
+    if (e && e.code === 'unavailable' && !q.retried) { q.retried = true; setTimeout(() => flush(name), 1500 + Math.random() * 1500); return; }
+    remote = null; syncState = 'local'; renderSync(); return;
+  }
+  q.busy = false; q.retried = false;
+  if (q.dirty) { q.dirty = false; flush(name); }
+}
+async function initRemote() {
+  if (!window.claude || typeof window.claude.use !== 'function') return;
+  try {
+    const timeout = new Promise(res => setTimeout(() => res(null), 10000));
+    const [db, user] = await Promise.all([Promise.race([window.claude.use('db'), timeout]), Promise.race([window.claude.use('user'), timeout])]);
+    if (!db || !user) return;
+    const uid = await user.id(); if (!uid) return;
+    const refs = { progress: db.doc('data/users/' + uid + '/progress'), vocab: db.doc('data/users/' + uid + '/vocab') };
+    const snaps = await Promise.race([Promise.all([refs.progress.get(), refs.vocab.get()]), timeout]);
+    if (!snaps) return;
+    remote = { refs };
+    ['progress', 'vocab'].forEach((name, i) => {
+      const r = (snaps[i].exists && snaps[i].data() && snaps[i].data().items) || {};
+      const merged = mergeItems(S[name], r);
+      if (name === 'vocab') pruneVocab(merged);
+      const changed = JSON.stringify(merged) !== JSON.stringify(r);
+      S[name] = merged; LS.set('topik.' + name, merged);
+      if (changed) persist(name);
+    });
+    syncState = 'remote'; renderSync(); refreshCounts(); route();
+  } catch (e) { remote = null; }
+}
+function renderSync() { const n = $('#syncLine'); if (n) n.textContent = syncState === 'remote' ? '进度和生词本已保存到你的账号，只有你自己能看到，换设备打开也在。' : '进度和生词本保存在这个浏览器里。'; }
+
+/* ---------------- data ---------------- */
+async function getJSON(u) { const r = await fetch(u); if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }
+async function loadBase() { [INDEX, DICT] = await Promise.all([getJSON('data/index.json'), getJSON('data/dict.json')]); }
+async function loadExam(id) { if (!EX[id]) EX[id] = getJSON('data/e' + id + '.json').then(d => { d.qmap = {}; d.groups.forEach(g => g.qs.forEach(q => { d.qmap[q.n] = { q, g }; })); return d; }); return EX[id]; }
+const meta = id => INDEX.find(x => x.id === id);
+
+/* ---------------- progress helpers ---------------- */
+const pk = (id, n) => id + '-' + n;
+const choice = (id, n) => (S.progress[pk(id, n)] || {}).c || 0;
+function examStats(id, data) {
+  let ans = 0, ok = 0, bad = 0; const m = meta(id);
+  for (let n = 1; n <= 50; n++) {
+    if (m.skip.includes(n)) continue;
+    const c = choice(id, n); if (!c) continue; ans++;
+    const a = data ? data.qmap[n].q.ans : (S.progress[pk(id, n)] || {}).a;
+    if (c === a) ok++; else bad++;
+  }
+  return { ans, ok, bad, total: m.answerable };
+}
+function wrongList() { const out = []; for (const k in S.progress) { const v = S.progress[k]; if (v && v.c && v.a && v.c !== v.a) { const [id, n] = k.split('-').map(Number); out.push({ id, n, c: v.c, a: v.a, t: v.t }); } } return out.sort((x, y) => ORDER.indexOf(x.id) - ORDER.indexOf(y.id) || x.n - y.n); }
+function vocabList() { return Object.values(S.vocab).filter(v => v && !v.d).sort((a, b) => b.t - a.t); }
+function refreshCounts() {
+  const w = wrongList().length, v = vocabList().length;
+  $('#nWrong').textContent = w ? w : ''; $('#nVocab').textContent = v ? v : '';
+}
+function nextTarget() {
+  for (const id of ORDER) { const m = meta(id); for (let n = 1; n <= 50; n++) if (!m.skip.includes(n) && !choice(id, n)) return { id, n }; }
+  return null;
+}
+
+/* ---------------- token rendering ---------------- */
+const savedLemma = new Set();
+function rebuildSaved() { savedLemma.clear(); vocabList().forEach(v => savedLemma.add(v.ty + ':' + v.k)); }
+function isSavedA(a) { const [ws, gs, ps] = DICT.A[a]; return ws.some(i => savedLemma.has('w:' + DICT.W[i][0])) || ps.some(i => savedLemma.has('p:' + DICT.P[i][0])) || gs.some(i => savedLemma.has('g:' + DICT.G[i][0])); }
+function fill(node, tokens) {
+  let ul = null;
+  tokens.forEach((tk, i) => {
+    const [s, a, u] = tk; let n;
+    if (a >= 0) { n = el('span', 'w', s); n.dataset.a = a; if (isSavedA(a)) n.classList.add('saved'); }
+    else if (s.startsWith('(____)')) { n = document.createDocumentFragment(); const b = el('span', 'blank'); b.append('(', el('span', 'gap'), ')'); n.append(b); if (s.length > 6) n.append(s.slice(6)); }
+    else if (/^\((가|나|다|라|㉠|㉡|㉢|㉣)\)/.test(s)) n = el('span', 'mk', s);
+    else n = document.createTextNode(s);
+    if (u) { if (ul && tokens[i - 1] && tokens[i - 1][2]) ul.append(' ', n); else { if (i) node.append(' '); ul = el('span', 'ul'); ul.append(n); node.append(ul); } return; }
+    ul = null; if (i) node.append(' '); node.append(n);
+  });
+  return node;
+}
+function para(tokens, src, cls, tag) { const p = el(tag || 'p', cls); p.dataset.src = src; return fill(p, tokens); }
+function plain(tokens) { return tokens.map(t => t[0]).join(' ').replace(/\(____\)/g, '(　　)'); }
+function markSaved() { document.querySelectorAll('.w').forEach(w => w.classList.toggle('saved', isSavedA(+w.dataset.a))); }
+
+/* ---------------- dictionary popover ---------------- */
+const pop = $('#pop'); let popFor = null, popTimer = 0, pinned = false;
+function naver(q) { return 'https://korean.dict.naver.com/kozhdict/#/search?query=' + encodeURIComponent(q); }
+function ctxOf(span) {
+  const p = span.closest('[data-src]'); if (!p) return { ctx: '', src: '' };
+  const full = p.textContent.replace(/\s+/g, ' ').trim(); const s = span.textContent; const i = full.indexOf(s);
+  let a = Math.max(0, i - 36), b = Math.min(full.length, i + s.length + 36);
+  return { ctx: (a > 0 ? '…' : '') + full.slice(a, b) + (b < full.length ? '…' : ''), src: p.dataset.src || '', hit: s };
+}
+function starBtn(ty, k, zh, span) {
+  const key = ty + ':' + k; const b = el('button', 'star'); b.type = 'button';
+  const sync = () => { const on = savedLemma.has(key); b.classList.toggle('on', on); b.textContent = on ? '★ 已收藏' : '☆ 生词本'; b.setAttribute('aria-pressed', on); };
+  sync();
+  b.addEventListener('click', ev => {
+    ev.stopPropagation();
+    const now = Date.now();
+    if (savedLemma.has(key)) { S.vocab[key] = Object.assign({}, S.vocab[key], { d: 1, t: now }); toast('已从生词本移除'); }
+    else { const c = ctxOf(span); S.vocab[key] = { k, ty, zh, ctx: c.ctx, hit: c.hit, src: c.src, t: now }; toast('已加入生词本'); }
+    persist('vocab'); rebuildSaved(); sync(); markSaved(); refreshCounts();
+  });
+  return b;
+}
+function showPop(span, pin) {
+  const a = +span.dataset.a; const [ws, gs, ps] = DICT.A[a];
+  if (popFor) popFor.classList.remove('on');
+  popFor = span; pinned = pin; span.classList.add('on');
+  pop.replaceChildren();
+  const hd = el('div', 'hd'); hd.append(el('span', 'sf', span.textContent));
+  if (touch || pin) { const x = el('button', 'x', '✕'); x.type = 'button'; x.setAttribute('aria-label', '关闭'); x.addEventListener('click', ev => { ev.stopPropagation(); hidePop(); }); hd.append(x); }
+  pop.append(hd);
+  ws.forEach(i => { const [k, zh] = DICT.W[i]; const r = el('div', 'row'); r.append(el('div', 'lem', k), el('div', 'zh', zh || '（暂无释义）'), starBtn('w', k, zh, span)); pop.append(r); });
+  if (gs.length) { const sec = el('div', 'sec'); sec.append(el('div', 'sh', '语法')); gs.forEach(i => { const [k, zh] = DICT.G[i]; const r = el('div', 'row'); r.append(el('div', 'gl', k), el('div', 'zh', zh), starBtn('g', k, zh, span)); sec.append(r); }); pop.append(sec); }
+  if (ps.length) { const sec = el('div', 'sec'); sec.append(el('div', 'sh', '惯用表达')); ps.forEach(i => { const [k, zh] = DICT.P[i]; const r = el('div', 'row'); r.append(el('div', 'gl', k), el('div', 'zh', zh), starBtn('p', k, zh, span)); sec.append(r); }); pop.append(sec); }
+  const ft = el('div', 'ft'); const lk = el('a', '', '在 Naver 韩中词典查看 ↗'); lk.href = naver(ws.length ? DICT.W[ws[0]][0] : span.textContent); lk.target = '_blank'; lk.rel = 'noopener'; ft.append(lk); pop.append(ft);
+  pop.classList.toggle('sheet', touch); pop.hidden = false;
+  if (!touch) {
+    const r = span.getBoundingClientRect(); const pw = pop.offsetWidth, ph = pop.offsetHeight;
+    let x = r.left + window.scrollX; x = Math.max(window.scrollX + 8, Math.min(x, window.scrollX + document.documentElement.clientWidth - pw - 8));
+    let y = r.bottom + window.scrollY + 6; if (r.bottom + ph + 12 > window.innerHeight && r.top > ph + 70) y = r.top + window.scrollY - ph - 6;
+    pop.style.left = x + 'px'; pop.style.top = y + 'px';
+  } else { pop.style.left = ''; pop.style.top = ''; }
+}
+function hidePop() { clearTimeout(popTimer); pop.hidden = true; pinned = false; if (popFor) popFor.classList.remove('on'); popFor = null; }
+document.addEventListener('mouseover', e => {
+  if (touch || !DICT) return;
+  const w = e.target.closest && e.target.closest('.w');
+  if (e.target.closest && e.target.closest('#pop')) { clearTimeout(popTimer); return; }
+  if (!w) return;
+  clearTimeout(popTimer);
+  if (pinned && popFor !== w) return;
+  popTimer = setTimeout(() => showPop(w, false), 130);
+});
+document.addEventListener('mouseout', e => {
+  if (touch || pinned) return;
+  const from = e.target.closest && e.target.closest('.w, #pop'); if (!from) return;
+  const to = e.relatedTarget;
+  if (to && to.closest && (to.closest('#pop') || to === popFor)) return;
+  clearTimeout(popTimer); popTimer = setTimeout(hidePop, 260);
+});
+
+/* ---------------- toast ---------------- */
+let toastT = 0; function toast(m) { const t = $('#toast'); t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 1600); }
+
+/* ---------------- views ---------------- */
+const view = $('#view');
+function setNav(name) { document.querySelectorAll('[data-nav]').forEach(a => { if (a.dataset.nav === name) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); }); }
+
+function renderHome() {
+  setNav('home'); view.replaceChildren();
+  const intro = el('section', 'intro');
+  intro.append(el('h1', '', 'TOPIK II 阅读真题 · 依次刷题'));
+  intro.append(el('p', 'muted', '第64、83、91、96、102回 한국어능력시험 II 읽기，共 250 题。每题选完立即判对错，答错的题自动进错题本。'));
+  const demo = el('div', 'demo');
+  demo.append(el('div', 'hint', touch ? '不认识的单词，点一下就能看到中文释义和语法，可加入生词本。试试：' : '不认识的单词，把鼠标放上去就能看到中文释义和语法，点击可固定弹窗、加入生词本。试试：'));
+  const ex = el('div', 'ko ex'); const d = demoTokens(); if (d) { const p = para(d, '', ''); ex.append(p); } demo.append(ex);
+  const omr = el('div', 'hint'); omr.append('作答方式和答题卡一样，点选项涂卡：'); omr.append(el('span', 'omr', ' ① ● ③ ④')); demo.append(omr);
+  intro.append(demo);
+  const nt = nextTarget(); const go = el('div'); go.style.display = 'flex'; go.style.gap = '10px'; go.style.flexWrap = 'wrap';
+  if (nt) { const b = el('a', 'btn pri', (nt.id === 64 && nt.n === 1 ? '从第64回第1题开始' : '继续：' + meta(nt.id).title + ' 第' + nt.n + '题') + ' →'); b.href = '#e' + nt.id + '-' + nt.n; go.append(b); }
+  else go.append(el('span', 'muted', '250 题全部做完了。可以去错题本复习。'));
+  intro.append(go);
+  const sync = el('p', 'sync'); sync.id = 'syncLine'; intro.append(sync);
+  view.append(intro);
+  const list = el('section', 'list'); list.setAttribute('aria-label', '各回真题');
+  INDEX.forEach(m => {
+    const st = examStats(m.id); const row = el('div', 'exam');
+    const t = el('div', 't', m.title); t.append(el('small', '', m.year + '년 · 제' + m.id + '회 읽기')); row.append(t);
+    const mt = el('div', 'meter'); const tr = el('div', 'track'); const g = el('i', 'g'); g.style.width = (st.ok / st.total * 100) + '%'; const r = el('i', 'r'); r.style.width = (st.bad / st.total * 100) + '%'; tr.append(g, r); mt.append(tr);
+    mt.append(el('div', 'stat', st.ans ? `已答 ${st.ans}/${st.total} · 正确 ${st.ok} · 得分 ${st.ok * 2}/${st.total * 2}` : `${st.total} 题可作答` + (m.skip.length ? `（${m.skip.length} 题原卷未公开文章）` : '')));
+    row.append(mt);
+    const acts = el('div', 'acts');
+    let first = 1; for (let n = 1; n <= 50; n++) if (!m.skip.includes(n) && !choice(m.id, n)) { first = n; break; }
+    const done = st.ans >= st.total;
+    const b = el('a', 'btn ' + (done ? '' : 'pri'), done ? '看成绩' : st.ans ? '继续' : '开始'); b.href = done ? '#r' + m.id : '#e' + m.id + '-' + first; acts.append(b);
+    row.append(acts); list.append(row);
+  });
+  view.append(list); renderSync();
+}
+let demoCache = null;
+function demoTokens() {
+  if (demoCache) return demoCache;
+  return null;
+}
+
+async function renderExam(id, n) {
+  setNav('home');
+  const data = await loadExam(id); const m = meta(id);
+  n = Math.min(50, Math.max(1, n || 1));
+  S.pos[id] = n; LS.set('topik.pos', S.pos);
+  const { q, g } = data.qmap[n];
+  view.replaceChildren();
+  const head = el('div', 'xhead');
+  const back = el('a', 'btn sm ghost', '← 真题列表'); back.href = '#home'; head.append(back);
+  const ttl = el('div', 'ttl', m.title); ttl.append(el('span', '', '제' + id + '회 읽기')); head.append(ttl);
+  const st = examStats(id, data); head.append(el('div', 'score', `已答 ${st.ans}/${st.total} · 正确 ${st.ok} · 得分 ${st.ok * 2}`));
+  view.append(head);
+  const grid = el('div', 'xgrid'); view.append(grid);
+  const card = el('article', 'card'); card.setAttribute('aria-label', '第' + n + '题'); grid.append(card);
+  const src = id + '-' + n;
+  const ins = el('div', 'ins'); ins.dataset.src = src; ins.append('※ [' + g.r[0] + '~' + g.r[1] + '] '); fill(ins, g.ins); card.append(ins);
+  if (g.und) {
+    const u = el('div', 'undisc'); u.append(el('b', '', '《 안내 》 저작권 관련 법령에 따라 본 문항의 지문은 공개하지 않습니다.')); u.append(el('br')); u.append('原卷因版权原因没有公开这篇文章，本题无法作答，不计分。'); card.append(u);
+  } else if (g.pas.length) { const ps = el('div', 'ko passage'); g.pas.forEach(p => ps.append(para(p, src))); card.append(ps); }
+  const body = el('div', 'ko');
+  const ql = el('div', 'qline'); ql.append(el('span', 'qn', n + '.'));
+  const inlineFirst = !q.prompt && !q.box && !q.poster.length && !q.img && q.text.length;
+  if (q.prompt) { const p = para(q.prompt, src); p.style.margin = '0'; ql.append(p); }
+  else if (inlineFirst && q.text.length === 1) { const p = para(q.text[0], src); p.style.margin = '0'; ql.append(p); }
+  body.append(ql);
+  if (q.box) {
+    const bx = el('div', 'boxed');
+    if (/보기/.test(plain(g.ins)) || (q.prompt && /보기/.test(plain(q.prompt)))) bx.append(el('div', 'bogi', '<보 기>'));
+    bx.append(para(q.box, src)); body.append(bx);
+  }
+  if (q.poster.length) { const po = el('div', 'poster'); q.poster.forEach(l => po.append(para(l, src, /^[■●▶※❶❷☑]|^\d\./.test(l[0][0]) ? 'li' : ''))); body.append(po); }
+  if (q.img) { const f = el('figure', 'chart'); f.style.margin = '0'; const im = el('img'); im.src = q.img; im.alt = '第' + n + '题图表'; im.loading = 'lazy'; f.append(im); body.append(f); }
+  q.text.forEach((t, i) => { if (!(inlineFirst && q.text.length === 1 && i === 0)) body.append(para(t, src)); });
+  card.append(body);
+  const c = choice(id, n); const answered = !!c && q.ans;
+  const ol = el('ol', 'opts' + (answered ? ' answered' : '')); ol.setAttribute('aria-label', '选项');
+  q.opts.forEach((o, i) => {
+    const li = el('li'); const b = el('button', 'opt'); b.type = 'button'; b.dataset.i = i + 1;
+    b.append(el('span', 'bub', String(i + 1)));
+    const t = el('span', 'ko'); t.append(para(o, src, '', 'span')); b.append(t);
+    if (answered) { if (i + 1 === q.ans) b.classList.add('right'); else if (i + 1 === c) b.classList.add('wrong'); b.setAttribute('aria-disabled', 'true'); }
+    if (!q.ans) b.disabled = true;
+    li.append(b); ol.append(li);
+  });
+  card.append(ol);
+  if (answered) {
+    const ok = c === q.ans; const fb = el('div', 'fb ' + (ok ? 'ok' : 'bad'));
+    fb.append(ok ? '✓ 回答正确' : '✗ 回答错误：你选了 ' + CIRC[c - 1] + '，正确答案是 ' + CIRC[q.ans - 1]);
+    const redo = el('button', 'btn sm ghost', '重做本题'); redo.type = 'button'; redo.dataset.act = 'redo'; fb.append(redo);
+    card.append(fb);
+  } else if (q.ans) card.append(el('div', 'hint', touch ? '点选项前面的圆圈作答；点单词查释义。键盘 1–4 也可作答。' : '点击选项作答（键盘 1–4）。鼠标停在单词上查看释义。'));
+  const nav = el('div', 'qnav');
+  const prev = el('a', 'btn', '← 上一题'); if (n > 1) prev.href = '#e' + id + '-' + (n - 1); else { const pi = ORDER.indexOf(id); if (pi > 0) { prev.href = '#e' + ORDER[pi - 1] + '-50'; prev.textContent = '← 上一回'; } else prev.setAttribute('aria-disabled', 'true'); }
+  const next = el('a', 'btn' + (answered || !q.ans ? ' pri' : ''), n < 50 ? '下一题 →' : '看本回成绩 →'); next.href = n < 50 ? '#e' + id + '-' + (n + 1) : '#r' + id; next.id = 'nextBtn';
+  nav.append(prev, next); card.append(nav);
+  // side sheet
+  const side = el('aside', 'side' + (window.innerWidth <= 1000 ? ' fold' : '')); side.setAttribute('aria-label', '题号');
+  const sh = el('div'); sh.style.display = 'flex'; sh.style.alignItems = 'center'; sh.style.gap = '8px';
+  sh.append(el('span', 'lbl', '答题卡 · 第' + n + '/50题'));
+  const tg = el('button', 'btn sm ghost sidebar-toggle', side.classList.contains('fold') ? '展开题号' : '收起'); tg.type = 'button'; tg.style.marginLeft = 'auto';
+  tg.addEventListener('click', () => { side.classList.toggle('fold'); tg.textContent = side.classList.contains('fold') ? '展开题号' : '收起'; });
+  sh.append(tg); side.append(sh);
+  const cells = el('div', 'cells');
+  for (let k = 1; k <= 50; k++) {
+    const b = el('button', '', String(k)); b.type = 'button'; b.dataset.go = k; const qq = data.qmap[k].q; const ck = choice(id, k);
+    if (!qq.ans) b.className = 'skip'; else if (ck) b.className = ck === qq.ans ? 'ok' : 'bad';
+    if (k === n) b.classList.add('cur'); b.setAttribute('aria-label', '第' + k + '题'); cells.append(b);
+  }
+  side.append(cells);
+  const lg = el('div', 'legend'); [['ok', '对'], ['bad', '错'], ['', '未答'], ['skip', '未公开']].forEach(([c2, t2]) => { const s2 = el('span'); const i2 = el('i'); if (c2 === 'ok') { i2.style.background = 'var(--ok-bg)'; i2.style.borderColor = 'var(--ok)'; } if (c2 === 'bad') { i2.style.background = 'var(--bad-bg)'; i2.style.borderColor = 'var(--bad)'; } if (c2 === 'skip') i2.style.borderStyle = 'dashed'; s2.append(i2, t2); lg.append(s2); });
+  side.append(lg);
+  grid.append(side);
+  cur = { id, n, q };
+}
+let cur = null;
+
+function answer(i) {
+  if (!cur || !cur.q.ans) return;
+  const { id, n, q } = cur; if (choice(id, n)) return;
+  S.progress[pk(id, n)] = { c: i, a: q.ans, t: Date.now() };
+  persist('progress'); refreshCounts();
+  const y = window.scrollY; renderExam(id, n).then(() => { window.scrollTo(0, y); const nb = $('#nextBtn'); if (nb) nb.focus({ preventScroll: true }); });
+}
+function redo() { if (!cur) return; const { id, n } = cur; S.progress[pk(id, n)] = { c: 0, t: Date.now() }; persist('progress'); refreshCounts(); const y = window.scrollY; renderExam(id, n).then(() => window.scrollTo(0, y)); }
+
+async function renderResult(id) {
+  setNav('home'); const data = await loadExam(id); const m = meta(id); const st = examStats(id, data);
+  view.replaceChildren();
+  const card = el('section', 'card res'); card.style.maxWidth = '46rem';
+  card.append(el('h1', '', m.title + ' 成绩'));
+  const big = el('div', 'big', String(st.ok * 2)); big.append(el('span', 'muted', ' / ' + st.total * 2)); card.append(big);
+  card.append(el('p', 'muted', `已答 ${st.ans}/${st.total} 题，正确 ${st.ok} 题，错 ${st.bad} 题。` + (m.skip.length ? `第 ${m.skip.join('、')} 题原卷未公开文章，不计分。` : '')));
+  const wr = []; const un = [];
+  for (let n = 1; n <= 50; n++) { const q = data.qmap[n].q; if (!q.ans) continue; const c = choice(id, n); if (!c) un.push(n); else if (c !== q.ans) wr.push(n); }
+  if (wr.length) { const p = el('div', 'cells'); p.style.gridTemplateColumns = 'repeat(auto-fill,minmax(2.2rem,1fr))'; wr.forEach(n => { const b = el('button', 'bad', String(n)); b.type = 'button'; b.dataset.goto = id + '-' + n; p.append(b); }); card.append(el('div', 'sh', '错题（点击查看）')); card.append(p); }
+  if (un.length) card.append(el('p', 'muted', '还有 ' + un.length + ' 题没答：' + un.slice(0, 20).join('、') + (un.length > 20 ? '…' : '')));
+  const acts = el('div', 'qnav');
+  const b1 = el('a', 'btn', '← 回到第1题'); b1.href = '#e' + id + '-1';
+  const pi = ORDER.indexOf(id); const b2 = el('a', 'btn pri', pi < ORDER.length - 1 ? '下一回：' + meta(ORDER[pi + 1]).title + ' →' : '去错题本复习 →'); b2.href = pi < ORDER.length - 1 ? '#e' + ORDER[pi + 1] + '-1' : '#wrong';
+  acts.append(b1, b2); card.append(acts);
+  const rs = el('button', 'btn sm ghost', '清空本回作答记录，重新做'); rs.type = 'button'; rs.dataset.act = 'reset'; rs.dataset.id = id; card.append(rs);
+  view.append(card);
+}
+
+async function renderWrong() {
+  setNav('wrong'); view.replaceChildren();
+  view.append(el('h1', '', '错题本'));
+  const list = wrongList();
+  if (!list.length) { const e = el('div', 'empty', '还没有错题。做题时答错的题会自动出现在这里。'); view.append(e); return; }
+  view.append(el('p', 'muted', '共 ' + list.length + ' 道错题。点“重做”会清除这题的作答，重新回答。'));
+  const datas = {}; await Promise.all([...new Set(list.map(x => x.id))].map(async id => { datas[id] = await loadExam(id); }));
+  const wl = el('div', 'wl');
+  list.forEach(x => {
+    const { q, g } = datas[x.id].qmap[x.n]; const it = el('div', 'witem');
+    const left = el('div'); left.style.minWidth = '0';
+    left.append(el('div', 'meta', `${meta(x.id).title} 第${x.n}题 · 你选 ${CIRC[x.c - 1]} · 正确 ${CIRC[x.a - 1]}`));
+    const snip = q.prompt ? plain(q.prompt) : q.box ? plain(q.box) : q.text.length ? plain(q.text[0]) : g.pas.length ? plain(g.pas[0]) : plain(g.ins);
+    left.append(el('div', 'sn', snip));
+    const acts = el('div', 'acts'); acts.style.display = 'flex'; acts.style.gap = '6px';
+    const v = el('a', 'btn sm', '查看'); v.href = '#e' + x.id + '-' + x.n;
+    const r = el('button', 'btn sm pri', '重做'); r.type = 'button'; r.dataset.act = 'redoat'; r.dataset.k = x.id + '-' + x.n;
+    acts.append(v, r); it.append(left, acts); wl.append(it);
+  });
+  view.append(wl);
+}
+
+function renderVocab() {
+  setNav('vocab'); view.replaceChildren();
+  view.append(el('h1', '', '生词本'));
+  const list = vocabList();
+  if (!list.length) { view.append(el('div', 'empty', '生词本是空的。做题时在单词弹窗里点“☆ 生词本”，单词、语法和惯用表达都会连同原句一起收进来；收藏过的词在题目里会用黄色标出。')); return; }
+  const tb = el('div', 'toolbar');
+  tb.append(el('span', 'muted', '共 ' + list.length + ' 条'));
+  tb.append(el('span', 'grow'));
+  const hide = el('button', 'btn sm', '遮住中文自测'); hide.type = 'button'; hide.dataset.act = 'hidezh';
+  const cp = el('button', 'btn sm', '复制全部'); cp.type = 'button'; cp.dataset.act = 'copy';
+  tb.append(hide, cp); view.append(tb);
+  const vl = el('div', 'vlist'); if (LS.get('topik.hidezh', false)) vl.classList.add('hidezh');
+  const TY = { w: '单词', g: '语法', p: '惯用表达' };
+  list.forEach(v => {
+    const it = el('div', 'vitem');
+    const k = el('div', 'k', v.k); k.append(el('span', 'ty', TY[v.ty] || '单词')); it.append(k);
+    const zh = el('div', 'zh', v.zh || '（暂无释义）'); zh.title = '点击显示'; it.append(zh);
+    if (v.ctx) { const cx = el('div', 'cx'); const i = v.hit ? v.ctx.indexOf(v.hit) : -1; if (i >= 0) { cx.append(v.ctx.slice(0, i), el('b', '', v.hit), v.ctx.slice(i + v.hit.length)); } else cx.textContent = v.ctx; it.append(cx); }
+    if (v.src) { const [id, n] = v.src.split('-'); const s = el('div', 'src'); const a = el('a', '', `出自 第${id}回 第${n}题`); a.href = '#e' + id + '-' + n; s.append(a); it.append(s); }
+    const del = el('button', 'btn sm ghost del', '移除'); del.type = 'button'; del.dataset.act = 'vdel'; del.dataset.k = v.ty + ':' + v.k; it.append(del);
+    vl.append(it);
+  });
+  view.append(vl);
+}
+
+/* ---------------- routing & events ---------------- */
+async function route() {
+  hidePop();
+  if (!INDEX) return;
+  const h = (location.hash || '#home').slice(1);
+  let m;
+  try {
+    if ((m = h.match(/^e(\d+)-(\d+)$/)) && ORDER.includes(+m[1])) await renderExam(+m[1], +m[2]);
+    else if ((m = h.match(/^e(\d+)$/)) && ORDER.includes(+m[1])) await renderExam(+m[1], S.pos[m[1]] || 1);
+    else if ((m = h.match(/^r(\d+)$/)) && ORDER.includes(+m[1])) await renderResult(+m[1]);
+    else if (h === 'wrong') { cur = null; await renderWrong(); }
+    else if (h === 'vocab') { cur = null; renderVocab(); }
+    else { cur = null; renderHome(); }
+  } catch (err) { view.replaceChildren(el('p', 'loading', '题目文件没有载入成功，请刷新页面再试。')); }
+}
+window.addEventListener('hashchange', () => { route().then(() => window.scrollTo(0, 0)); });
+
+document.addEventListener('click', e => {
+  const t = e.target; if (!(t instanceof Element)) return;
+  if (t.closest('#pop')) return;
+  const w = t.closest('.w'); const opt = t.closest('.opt');
+  if (w && (touch || !opt || opt.closest('.answered'))) { e.preventDefault(); if (popFor === w && pinned) hidePop(); else showPop(w, true); return; }
+  if (!pop.hidden) hidePop();
+  if (opt && !opt.disabled && !opt.closest('.answered')) { answer(+opt.dataset.i); return; }
+  const go = t.closest('[data-go]'); if (go && cur) { location.hash = '#e' + cur.id + '-' + go.dataset.go; return; }
+  const gt = t.closest('[data-goto]'); if (gt) { location.hash = '#e' + gt.dataset.goto; return; }
+  const act = t.closest('[data-act]'); if (!act) return;
+  const a = act.dataset.act;
+  if (a === 'redo') redo();
+  else if (a === 'redoat') { const k = act.dataset.k; S.progress[k] = { c: 0, t: Date.now() }; persist('progress'); refreshCounts(); location.hash = '#e' + k; }
+  else if (a === 'reset') { const id = +act.dataset.id; for (let n = 1; n <= 50; n++) if (S.progress[pk(id, n)]) S.progress[pk(id, n)] = { c: 0, t: Date.now() }; persist('progress'); refreshCounts(); location.hash = '#e' + id + '-1'; }
+  else if (a === 'vdel') { const k = act.dataset.k; S.vocab[k] = Object.assign({}, S.vocab[k], { d: 1, t: Date.now() }); persist('vocab'); rebuildSaved(); refreshCounts(); renderVocab(); toast('已移除'); }
+  else if (a === 'hidezh') { const vl = $('.vlist'); const on = !vl.classList.contains('hidezh'); vl.classList.toggle('hidezh', on); LS.set('topik.hidezh', on); act.textContent = on ? '显示中文' : '遮住中文自测'; }
+  else if (a === 'copy') {
+    const txt = vocabList().map(v => [v.k, v.zh, v.ctx || ''].join('\t')).join('\n');
+    const fallback = () => { let box = $('.copybox'); if (!box) { box = el('textarea', 'copybox'); box.readOnly = true; act.closest('.toolbar').after(box); } box.value = txt; box.focus(); box.select(); toast('已选中全部内容，按 Ctrl/⌘+C 复制'); };
+    try { navigator.clipboard.writeText(txt).then(() => toast('已复制 ' + vocabList().length + ' 条（可粘贴到 Excel / Anki）'), fallback); } catch (err) { fallback(); }
+  }
+});
+document.addEventListener('click', e => { const z = e.target instanceof Element && e.target.closest('.hidezh .zh'); if (z) z.classList.toggle('show'); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { hidePop(); return; }
+  if (e.altKey || e.ctrlKey || e.metaKey || !cur) return;
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')) return;
+  if (/^[1-4]$/.test(e.key)) { answer(+e.key); e.preventDefault(); }
+  else if (e.key === 'ArrowRight') { const nb = $('#nextBtn'); if (nb) location.hash = nb.getAttribute('href'); }
+  else if (e.key === 'ArrowLeft') { const pb = $('.qnav .btn'); if (pb && pb.getAttribute('href')) location.hash = pb.getAttribute('href'); }
+});
+window.addEventListener('resize', () => { if (!pop.hidden && !touch) hidePop(); });
+
+(async function start() {
+  try { await loadBase(); } catch (err) { view.replaceChildren(el('p', 'loading', '题库载入失败。如果是直接双击打开的本地文件，请改用 GitHub Pages 或本地服务器（python3 -m http.server）打开。')); return; }
+  rebuildSaved(); refreshCounts();
+  // demo sentence from exam 83 Q3
+  loadExam(83).then(d => { demoCache = d.qmap[3].q.text[0]; if ((location.hash || '#home') === '#home' || location.hash === '') { const ex = $('.demo .ex'); if (ex && !ex.childNodes.length) ex.append(para(demoCache, '83-3')); } });
+  await route();
+  initRemote();
+})();
+})();
+</script>
+
+</html>
