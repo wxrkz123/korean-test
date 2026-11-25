@@ -200,7 +200,7 @@ h2{font-size:18px;margin:0 0 12px;text-wrap:balance}
 <script>
 (() => {
 'use strict';
-const ORDER = [64, 83, 91, 96, 102];
+const ORDER = [35, 37, 41, 47, 52, 64, 83, 91, 96, 102];
 const CIRC = ['①', '②', '③', '④'];
 const $ = (s, r = document) => r.querySelector(s);
 const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
@@ -281,8 +281,17 @@ function refreshCounts() {
   const w = wrongList().length, v = vocabList().length;
   $('#nWrong').textContent = w ? w : ''; $('#nVocab').textContent = v ? v : '';
 }
+function firstOpen(id) { const m = meta(id); for (let n = 1; n <= 50; n++) if (!m.skip.includes(n) && !choice(id, n)) return n; return 0; }
 function nextTarget() {
-  for (const id of ORDER) { const m = meta(id); for (let n = 1; n <= 50; n++) if (!m.skip.includes(n) && !choice(id, n)) return { id, n }; }
+  // resume the exam answered most recently, then the ones after it, then wrap around
+  let last = null, lastN = 0, lt = 0;
+  for (const k in S.progress) { const v = S.progress[k]; if (v && v.c && v.t > lt) { lt = v.t; [last, lastN] = k.split('-').map(Number); } }
+  if (last && ORDER.includes(last)) {
+    const m = meta(last);
+    for (let n = lastN + 1; n <= 50; n++) if (!m.skip.includes(n) && !choice(last, n)) return { id: last, n };
+  }
+  const start = last && ORDER.includes(last) ? ORDER.indexOf(last) : 0;
+  for (let i = 0; i < ORDER.length; i++) { const id = ORDER[(start + i) % ORDER.length]; const n = firstOpen(id); if (n) return { id, n }; }
   return null;
 }
 
@@ -294,8 +303,12 @@ function fill(node, tokens) {
   let ul = null;
   tokens.forEach((tk, i) => {
     const [s, a, u] = tk; let n;
-    if (a >= 0) { n = el('span', 'w', s); n.dataset.a = a; if (isSavedA(a)) n.classList.add('saved'); }
-    else if (s.startsWith('(____)')) { n = document.createDocumentFragment(); const b = el('span', 'blank'); b.append('(', el('span', 'gap'), ')'); n.append(b); if (s.length > 6) n.append(s.slice(6)); }
+    if (s.startsWith('(____)')) {
+      n = document.createDocumentFragment(); const b = el('span', 'blank'); b.append('(', el('span', 'gap'), ')'); n.append(b);
+      const rest = s.slice(6);
+      if (rest) { if (a >= 0 && /[가-힣]/.test(rest)) { const w = el('span', 'w', rest); w.dataset.a = a; if (isSavedA(a)) w.classList.add('saved'); n.append(w); } else n.append(rest); }
+    }
+    else if (a >= 0) { n = el('span', 'w', s); n.dataset.a = a; if (isSavedA(a)) n.classList.add('saved'); }
     else if (/^\((가|나|다|라|㉠|㉡|㉢|㉣)\)/.test(s)) n = el('span', 'mk', s);
     else n = document.createTextNode(s);
     if (u) { if (ul && tokens[i - 1] && tokens[i - 1][2]) ul.append(' ', n); else { if (i) node.append(' '); ul = el('span', 'ul'); ul.append(n); node.append(ul); } return; }
@@ -378,15 +391,15 @@ function renderHome() {
   setNav('home'); view.replaceChildren();
   const intro = el('section', 'intro');
   intro.append(el('h1', '', 'TOPIK II 阅读真题 · 依次刷题'));
-  intro.append(el('p', 'muted', '第64、83、91、96、102回 한국어능력시험 II 읽기，共 250 题。每题选完立即判对错，答错的题自动进错题本。'));
+  intro.append(el('p', 'muted', '第35、37、41、47、52、64、83、91、96、102回 한국어능력시험 II 읽기，共 10 回 500 题，按年份从早到晚排列。每题选完立即判对错，答错的题自动进错题本。'));
   const demo = el('div', 'demo');
   demo.append(el('div', 'hint', touch ? '不认识的单词，点一下就能看到中文释义和语法，可加入生词本。试试：' : '不认识的单词，把鼠标放上去就能看到中文释义和语法，点击可固定弹窗、加入生词本。试试：'));
   const ex = el('div', 'ko ex'); const d = demoTokens(); if (d) { const p = para(d, '', ''); ex.append(p); } demo.append(ex);
   const omr = el('div', 'hint'); omr.append('作答方式和答题卡一样，点选项涂卡：'); omr.append(el('span', 'omr', ' ① ● ③ ④')); demo.append(omr);
   intro.append(demo);
   const nt = nextTarget(); const go = el('div'); go.style.display = 'flex'; go.style.gap = '10px'; go.style.flexWrap = 'wrap';
-  if (nt) { const b = el('a', 'btn pri', (nt.id === 64 && nt.n === 1 ? '从第64回第1题开始' : '继续：' + meta(nt.id).title + ' 第' + nt.n + '题') + ' →'); b.href = '#e' + nt.id + '-' + nt.n; go.append(b); }
-  else go.append(el('span', 'muted', '250 题全部做完了。可以去错题本复习。'));
+  if (nt) { const b = el('a', 'btn pri', (!Object.values(S.progress).some(v => v && v.c) ? '从' + meta(nt.id).title + '第' + nt.n + '题开始' : '继续：' + meta(nt.id).title + ' 第' + nt.n + '题') + ' →'); b.href = '#e' + nt.id + '-' + nt.n; go.append(b); }
+  else go.append(el('span', 'muted', '500 题全部做完了。可以去错题本复习。'));
   intro.append(go);
   const sync = el('p', 'sync'); sync.id = 'syncLine'; intro.append(sync);
   view.append(intro);

@@ -120,7 +120,7 @@ def aidx(rec):
         A_IDX[rec] = len(A_LIST); A_LIST.append([list(rec[0]), list(rec[1]), list(rec[2])])
     return A_IDX[rec]
 P_LIST = []; P_PATTERNS = []
-UNKNOWN = collections.Counter()
+UNKNOWN = collections.Counter(); UNKNOWN_EX = {}
 
 def analyze_eojeols(text):
     toks = kiwi.tokenize(text)
@@ -154,7 +154,8 @@ def tokenize_para(raw):
         ws = resolve(ej["morphs"], ej["s"])
         words_per.append(ws)
         for w in ws:
-            if w not in DICT: UNKNOWN[w] += 1
+            if w not in DICT:
+                UNKNOWN[w] += 1; UNKNOWN_EX.setdefault(w, ej["s"])
     # grammar
     flat = []
     for ei, ej in enumerate(ejs):
@@ -197,10 +198,11 @@ def tokenize_para(raw):
         out.append(tok)
     return out
 
-TITLES = {64: "第64回", 83: "第83回", 91: "第91回", 96: "第96回", 102: "第102回"}
-YEARS = {64: "2019", 83: "2022", 91: "2023", 96: "2024", 102: "2025"}
+ORDER = [35, 37, 41, 47, 52, 64, 83, 91, 96, 102]
+TITLES = {n: f"第{n}回" for n in ORDER}
+YEARS = {35: "2014", 37: "2014", 41: "2015", 47: "2016", 52: "2017", 64: "2019", 83: "2022", 91: "2023", 96: "2024", 102: "2025"}
 index = []
-for n in [64, 83, 91, 96, 102]:
+for n in ORDER:
     ex = parse_tpk(os.path.join(SRC, "tpk", f"{n}.tpk"))
     groups = []
     for g in ex["groups"]:
@@ -226,4 +228,7 @@ json.dump({"W": W_LIST, "G": G_LIST, "P": P_LIST, "A": A_LIST}, open(f"{OUT}/dic
 json.dump(index, open(f"{OUT}/index.json", "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
 print("W", len(W_LIST), "A", len(A_LIST), "P", len(P_LIST), "G", len(G_LIST))
 print("unknown lemmas", len(UNKNOWN), sum(UNKNOWN.values()))
-if UNKNOWN: print(UNKNOWN.most_common(100))
+if UNKNOWN and os.environ.get("UNKNOWN_OUT"):
+    with open(os.environ["UNKNOWN_OUT"], "w", encoding="utf-8") as fo:
+        for w, c in UNKNOWN.items(): fo.write(f"{w}\t{UNKNOWN_EX[w]}\t{c}\n")
+elif UNKNOWN: print(UNKNOWN.most_common(100))
