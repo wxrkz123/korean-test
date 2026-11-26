@@ -200,14 +200,52 @@ def tokenize_para(raw):
 
 ORDER = [35, 37, 41, 47, 52, 64, 83, 91, 96, 102]
 TITLES = {n: f"第{n}回" for n in ORDER}
+
+# ---------- Chinese translations and explanations (source/zh) ----------
+def _norm_key(t):
+    return re.sub(r"\(\s*\)", "()", re.sub(r"\s+", " ", t.strip()))
+COMMON_ZH = {}
+_cp = os.path.join(SRC, "zh", "common.tsv")
+if os.path.exists(_cp):
+    for line in open(_cp, encoding="utf-8"):
+        if "\t" in line:
+            k, v = line.rstrip("\n").split("\t"); COMMON_ZH[_norm_key(k)] = v
+def parse_zh(path):
+    """=== a-b / P: passage paragraph ; ## n / T: text paragraph, B: box, S: poster line, O: a | b | c | d, E: explanation, Q: prompt"""
+    groups, qs = {}, {}; cur = None
+    for raw in open(path, encoding="utf-8"):
+        l = raw.rstrip("\n").strip()
+        if not l or l.startswith("#!"): continue
+        m = re.match(r"^=== (\d+)-(\d+)$", l)
+        if m: cur = groups.setdefault((int(m.group(1)), int(m.group(2))), {"P": []}); continue
+        m = re.match(r"^## (\d+)$", l)
+        if m: cur = qs.setdefault(int(m.group(1)), {"T": [], "S": []}); continue
+        m = re.match(r"^([PTBSOEQ]):\s?(.*)$", l)
+        if not m or cur is None: raise ValueError(f"{path}: bad line {l!r}")
+        k, v = m.group(1), m.group(2).strip()
+        if k in ("P", "T", "S"): cur.setdefault(k, []).append(v)
+        elif k == "O": cur["O"] = [x.strip() for x in v.split(" | ")]
+        else: cur[k] = v
+    return groups, qs
 YEARS = {35: "2014", 37: "2014", 41: "2015", 47: "2016", 52: "2017", 64: "2019", 83: "2022", 91: "2023", 96: "2024", 102: "2025"}
 index = []
+ZH_PROBLEMS = []; ZH_DONE = []
 for n in ORDER:
     ex = parse_tpk(os.path.join(SRC, "tpk", f"{n}.tpk"))
+    _zp = os.path.join(SRC, "zh", f"{n}.zh")
+    ZH = parse_zh(_zp) if os.path.exists(_zp) else None
+    if ZH is not None: ZH_DONE.append(n)
     groups = []
     for g in ex["groups"]:
         und = g["passage"] == ["[undisclosed]"]
         G = {"r": g["range"], "ins": tokenize_para(g["instruction"]), "pas": [] if und else [tokenize_para(p) for p in g["passage"]], "und": und, "qs": []}
+        if ZH is not None:
+            G["insZh"] = COMMON_ZH.get(_norm_key(g["instruction"]))
+            if not G["insZh"]: ZH_PROBLEMS.append(f"{n} instruction {g['instruction']}")
+            zg = ZH[0].get(tuple(g["range"]), {"P": []})
+            if not und:
+                if len(zg["P"]) != len(g["passage"]): ZH_PROBLEMS.append(f"{n} group {g['range']}: {len(zg['P'])} P lines for {len(g['passage'])} paragraphs")
+                G["pasZh"] = zg["P"]
         for q in g["questions"]:
             Q = {"n": q["n"],
                  "prompt": tokenize_para(q["prompt"]) if q["prompt"] else None,
@@ -217,16 +255,40 @@ for n in ORDER:
                  "text": [tokenize_para(x) for x in q["text"]],
                  "opts": [tokenize_para(x) for x in q["options"]],
                  "ans": q["answer"]}
+            if ZH is not None:
+                z = ZH[1].get(q["n"])
+                if z is None: ZH_PROBLEMS.append(f"{n} Q{q['n']}: missing")
+                else:
+                    zq = {}
+                    if q["prompt"]:
+                        zq["p"] = z.get("Q") or COMMON_ZH.get(_norm_key(q["prompt"]))
+                        if not zq["p"]: ZH_PROBLEMS.append(f"{n} Q{q['n']}: prompt {q['prompt']}")
+                    if len(z["T"]) != len(q["text"]): ZH_PROBLEMS.append(f"{n} Q{q['n']}: {len(z['T'])} T for {len(q['text'])} text")
+                    zq["t"] = z["T"]
+                    if q["box"]:
+                        if not z.get("B"): ZH_PROBLEMS.append(f"{n} Q{q['n']}: missing B")
+                        zq["b"] = z.get("B")
+                    if q["poster"]:
+                        if not z["S"]: ZH_PROBLEMS.append(f"{n} Q{q['n']}: missing S")
+                        zq["s"] = z["S"]
+                    if len(z.get("O", [])) != 4: ZH_PROBLEMS.append(f"{n} Q{q['n']}: O has {len(z.get('O', []))}")
+                    zq["o"] = z.get("O", [])
+                    Q["zh"] = zq
+                    if z.get("E"): Q["exp"] = z["E"]
+                    elif q["answer"]: ZH_PROBLEMS.append(f"{n} Q{q['n']}: missing E")
             G["qs"].append(Q)
         groups.append(G)
     json.dump({"id": n, "title": TITLES[n], "groups": groups}, open(f"{OUT}/e{n}.json", "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     answerable = sum(1 for g in ex["groups"] for q in g["questions"] if q["answer"])
-    index.append({"id": n, "title": TITLES[n], "year": YEARS[n], "count": 50, "answerable": answerable,
+    index.append({"id": n, "title": TITLES[n], "year": YEARS[n], "count": 50, "answerable": answerable, "zh": ZH is not None,
                   "skip": [q["n"] for g in ex["groups"] for q in g["questions"] if not q["answer"]]})
 G_LIST = [[label, zh] for (_, label, zh) in COMPILED]
 json.dump({"W": W_LIST, "G": G_LIST, "P": P_LIST, "A": A_LIST}, open(f"{OUT}/dict.json", "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
 json.dump(index, open(f"{OUT}/index.json", "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
 print("W", len(W_LIST), "A", len(A_LIST), "P", len(P_LIST), "G", len(G_LIST))
+print("translations:", ZH_DONE)
+if ZH_PROBLEMS:
+    print("TRANSLATION PROBLEMS:"); [print("  " + x) for x in ZH_PROBLEMS]; sys.exit(1)
 print("unknown lemmas", len(UNKNOWN), sum(UNKNOWN.values()))
 if UNKNOWN and os.environ.get("UNKNOWN_OUT"):
     with open(os.environ["UNKNOWN_OUT"], "w", encoding="utf-8") as fo:

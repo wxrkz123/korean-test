@@ -180,6 +180,14 @@ h2{font-size:18px;margin:0 0 12px;text-wrap:balance}
 .copybox{width:100%;min-height:8rem;font-family:var(--f-ko);font-size:14px;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--sheet);color:var(--ink)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:8px 16px;border-radius:99px;font-size:14px;z-index:50;box-shadow:var(--shadow)}
 .loading{padding:40px 0;color:var(--muted)}
+/* translation & explanation */
+.zh{font-family:var(--f-ui);font-size:14.5px;line-height:1.7;color:var(--muted);margin:2px 0 10px;word-break:normal;overflow-wrap:anywhere}
+.zh:last-child{margin-bottom:0}
+.ocol{display:flex;flex-direction:column;min-width:0;gap:1px}
+.opt .zh{font-size:13.5px;margin:0}
+.btn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.exp{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 10px 10px 0;font-size:15px;line-height:1.75}
+.exp .lab{font-weight:700;color:var(--accent);margin-right:6px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 
@@ -316,6 +324,11 @@ function fill(node, tokens) {
   });
   return node;
 }
+function zhLine(text, tag) {
+  const d = el(tag || 'div', 'zh'); if (!text) return d;
+  text.split(/(__.+?__)/).forEach(part => { if (/^__.+__$/.test(part)) d.append(el('span', 'ul', part.slice(2, -2))); else if (part) d.append(part); });
+  return d;
+}
 function para(tokens, src, cls, tag) { const p = el(tag || 'p', cls); p.dataset.src = src; return fill(p, tokens); }
 function plain(tokens) { return tokens.map(t => t[0]).join(' ').replace(/\(____\)/g, '(　　)'); }
 function markSaved() { document.querySelectorAll('.w').forEach(w => w.classList.toggle('saved', isSavedA(+w.dataset.a))); }
@@ -406,7 +419,7 @@ function renderHome() {
   const list = el('section', 'list'); list.setAttribute('aria-label', '各回真题');
   INDEX.forEach(m => {
     const st = examStats(m.id); const row = el('div', 'exam');
-    const t = el('div', 't', m.title); t.append(el('small', '', m.year + '년 · 제' + m.id + '회 읽기')); row.append(t);
+    const t = el('div', 't', m.title); t.append(el('small', '', m.year + '년 · 제' + m.id + '회 읽기' + (m.zh ? ' · 含翻译解析' : ''))); row.append(t);
     const mt = el('div', 'meter'); const tr = el('div', 'track'); const g = el('i', 'g'); g.style.width = (st.ok / st.total * 100) + '%'; const r = el('i', 'r'); r.style.width = (st.bad / st.total * 100) + '%'; tr.append(g, r); mt.append(tr);
     mt.append(el('div', 'stat', st.ans ? `已答 ${st.ans}/${st.total} · 正确 ${st.ok} · 得分 ${st.ok * 2}/${st.total * 2}` : `${st.total} 题可作答` + (m.skip.length ? `（${m.skip.length} 题原卷未公开文章）` : '')));
     row.append(mt);
@@ -435,35 +448,47 @@ async function renderExam(id, n) {
   const back = el('a', 'btn sm ghost', '← 真题列表'); back.href = '#home'; head.append(back);
   const ttl = el('div', 'ttl', m.title); ttl.append(el('span', '', '제' + id + '회 읽기')); head.append(ttl);
   const st = examStats(id, data); head.append(el('div', 'score', `已答 ${st.ans}/${st.total} · 正确 ${st.ok} · 得分 ${st.ok * 2}`));
+  const hasZh = !!q.zh; const zhOn = hasZh && LS.get('topik.zh', false);
+  const zb = el('button', 'btn sm' + (zhOn ? ' on' : ''), hasZh ? (zhOn ? '隐藏中文' : '显示中文翻译') : '本回翻译制作中'); zb.type = 'button'; zb.dataset.act = 'zh';
+  if (!hasZh) zb.disabled = true; else zb.title = '快捷键 T';
+  head.append(zb);
   view.append(head);
   const grid = el('div', 'xgrid'); view.append(grid);
   const card = el('article', 'card'); card.setAttribute('aria-label', '第' + n + '题'); grid.append(card);
   const src = id + '-' + n;
   const ins = el('div', 'ins'); ins.dataset.src = src; ins.append('※ [' + g.r[0] + '~' + g.r[1] + '] '); fill(ins, g.ins); card.append(ins);
+  if (zhOn && g.insZh) { const z = zhLine(g.insZh); z.style.marginTop = '-10px'; card.append(z); }
   if (g.und) {
     const u = el('div', 'undisc'); u.append(el('b', '', '《 안내 》 저작권 관련 법령에 따라 본 문항의 지문은 공개하지 않습니다.')); u.append(el('br')); u.append('原卷因版权原因没有公开这篇文章，本题无法作答，不计分。'); card.append(u);
-  } else if (g.pas.length) { const ps = el('div', 'ko passage'); g.pas.forEach(p => ps.append(para(p, src))); card.append(ps); }
+  } else if (g.pas.length) { const ps = el('div', 'ko passage'); g.pas.forEach((p, i) => { ps.append(para(p, src)); if (zhOn && g.pasZh) ps.append(zhLine(g.pasZh[i])); }); card.append(ps); }
   const body = el('div', 'ko');
   const ql = el('div', 'qline'); ql.append(el('span', 'qn', n + '.'));
   const inlineFirst = !q.prompt && !q.box && !q.poster.length && !q.img && q.text.length;
   if (q.prompt) { const p = para(q.prompt, src); p.style.margin = '0'; ql.append(p); }
   else if (inlineFirst && q.text.length === 1) { const p = para(q.text[0], src); p.style.margin = '0'; ql.append(p); }
   body.append(ql);
+  if (zhOn) { if (q.prompt && q.zh.p) body.append(zhLine(q.zh.p)); else if (inlineFirst && q.text.length === 1) body.append(zhLine(q.zh.t[0])); }
   if (q.box) {
     const bx = el('div', 'boxed');
     if (/보기/.test(plain(g.ins)) || (q.prompt && /보기/.test(plain(q.prompt)))) bx.append(el('div', 'bogi', '<보 기>'));
-    bx.append(para(q.box, src)); body.append(bx);
+    bx.append(para(q.box, src)); if (zhOn && q.zh.b) bx.append(zhLine(q.zh.b)); body.append(bx);
   }
-  if (q.poster.length) { const po = el('div', 'poster'); q.poster.forEach(l => po.append(para(l, src, /^[■●▶※❶❷☑]|^\d\./.test(l[0][0]) ? 'li' : ''))); body.append(po); }
+  if (q.poster.length) {
+    const po = el('div', 'poster'); const zs = zhOn && q.zh.s ? q.zh.s : [];
+    q.poster.forEach((l, i) => { const li = /^[■●▶※❶❷☑]|^\d\./.test(l[0][0]) ? 'li' : ''; po.append(para(l, src, li)); if (zs.length === q.poster.length) { const z = zhLine(zs[i]); if (li) z.style.textAlign = 'left'; po.append(z); } });
+    if (zs.length && zs.length !== q.poster.length) zs.forEach(t => po.append(zhLine(t)));
+    body.append(po);
+  }
   if (q.img) { const f = el('figure', 'chart'); f.style.margin = '0'; const im = el('img'); im.src = q.img; im.alt = '第' + n + '题图表'; im.loading = 'lazy'; f.append(im); body.append(f); }
-  q.text.forEach((t, i) => { if (!(inlineFirst && q.text.length === 1 && i === 0)) body.append(para(t, src)); });
+  q.text.forEach((t, i) => { if (!(inlineFirst && q.text.length === 1 && i === 0)) { body.append(para(t, src)); if (zhOn && q.zh.t[i]) body.append(zhLine(q.zh.t[i])); } });
   card.append(body);
   const c = choice(id, n); const answered = !!c && q.ans;
   const ol = el('ol', 'opts' + (answered ? ' answered' : '')); ol.setAttribute('aria-label', '选项');
   q.opts.forEach((o, i) => {
     const li = el('li'); const b = el('button', 'opt'); b.type = 'button'; b.dataset.i = i + 1;
     b.append(el('span', 'bub', String(i + 1)));
-    const t = el('span', 'ko'); t.append(para(o, src, '', 'span')); b.append(t);
+    const col = el('span', 'ocol'); const t = el('span', 'ko'); t.append(para(o, src, '', 'span')); col.append(t);
+    if (zhOn && q.zh.o[i] && q.zh.o[i].replace(/\s/g, '') !== plain(o).replace(/\s/g, '')) col.append(zhLine(q.zh.o[i], 'span')); b.append(col);
     if (answered) { if (i + 1 === q.ans) b.classList.add('right'); else if (i + 1 === c) b.classList.add('wrong'); b.setAttribute('aria-disabled', 'true'); }
     if (!q.ans) b.disabled = true;
     li.append(b); ol.append(li);
@@ -474,6 +499,7 @@ async function renderExam(id, n) {
     fb.append(ok ? '✓ 回答正确' : '✗ 回答错误：你选了 ' + CIRC[c - 1] + '，正确答案是 ' + CIRC[q.ans - 1]);
     const redo = el('button', 'btn sm ghost', '重做本题'); redo.type = 'button'; redo.dataset.act = 'redo'; fb.append(redo);
     card.append(fb);
+    if (q.exp) { const ex = zhLine(q.exp); ex.className = 'exp'; ex.prepend(el('span', 'lab', '解析')); card.append(ex); }
   } else if (q.ans) card.append(el('div', 'hint', touch ? '点选项前面的圆圈作答；点单词查释义。键盘 1–4 也可作答。' : '点击选项作答（键盘 1–4）。鼠标停在单词上查看释义。'));
   const nav = el('div', 'qnav');
   const prev = el('a', 'btn', '← 上一题'); if (n > 1) prev.href = '#e' + id + '-' + (n - 1); else { const pi = ORDER.indexOf(id); if (pi > 0) { prev.href = '#e' + ORDER[pi - 1] + '-50'; prev.textContent = '← 上一回'; } else prev.setAttribute('aria-disabled', 'true'); }
@@ -507,6 +533,7 @@ function answer(i) {
   persist('progress'); refreshCounts();
   const y = window.scrollY; renderExam(id, n).then(() => { window.scrollTo(0, y); const nb = $('#nextBtn'); if (nb) nb.focus({ preventScroll: true }); });
 }
+function toggleZh() { if (!cur || !cur.q.zh) return; LS.set('topik.zh', !LS.get('topik.zh', false)); const y = window.scrollY; renderExam(cur.id, cur.n).then(() => window.scrollTo(0, y)); }
 function redo() { if (!cur) return; const { id, n } = cur; S.progress[pk(id, n)] = { c: 0, t: Date.now() }; persist('progress'); refreshCounts(); const y = window.scrollY; renderExam(id, n).then(() => window.scrollTo(0, y)); }
 
 async function renderResult(id) {
@@ -603,7 +630,8 @@ document.addEventListener('click', e => {
   const gt = t.closest('[data-goto]'); if (gt) { location.hash = '#e' + gt.dataset.goto; return; }
   const act = t.closest('[data-act]'); if (!act) return;
   const a = act.dataset.act;
-  if (a === 'redo') redo();
+  if (a === 'zh') toggleZh();
+  else if (a === 'redo') redo();
   else if (a === 'redoat') { const k = act.dataset.k; S.progress[k] = { c: 0, t: Date.now() }; persist('progress'); refreshCounts(); location.hash = '#e' + k; }
   else if (a === 'reset') { const id = +act.dataset.id; for (let n = 1; n <= 50; n++) if (S.progress[pk(id, n)]) S.progress[pk(id, n)] = { c: 0, t: Date.now() }; persist('progress'); refreshCounts(); location.hash = '#e' + id + '-1'; }
   else if (a === 'vdel') { const k = act.dataset.k; S.vocab[k] = Object.assign({}, S.vocab[k], { d: 1, t: Date.now() }); persist('vocab'); rebuildSaved(); refreshCounts(); renderVocab(); toast('已移除'); }
@@ -620,6 +648,7 @@ document.addEventListener('keydown', e => {
   if (e.altKey || e.ctrlKey || e.metaKey || !cur) return;
   if (/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')) return;
   if (/^[1-4]$/.test(e.key)) { answer(+e.key); e.preventDefault(); }
+  else if (e.key === 't' || e.key === 'T') toggleZh();
   else if (e.key === 'ArrowRight') { const nb = $('#nextBtn'); if (nb) location.hash = nb.getAttribute('href'); }
   else if (e.key === 'ArrowLeft') { const pb = $('.qnav .btn'); if (pb && pb.getAttribute('href')) location.hash = pb.getAttribute('href'); }
 });
