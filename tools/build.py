@@ -228,6 +228,21 @@ def parse_zh(path):
         elif k == "O": cur["O"] = [x.strip() for x in v.split(" | ")]
         else: cur[k] = v
     return groups, qs
+
+def parse_exp(path):
+    """Detailed explanations: '## n' followed by lines (思路：/关键句：/①○ /②× /词汇：...)."""
+    out = {}; cur = None
+    for raw in open(path, encoding="utf-8"):
+        l = raw.rstrip("\n").strip()
+        if not l or l.startswith("#!"): continue
+        m = re.match(r"^## (\d+)$", l)
+        if m: cur = out.setdefault(int(m.group(1)), []); continue
+        if cur is None: raise ValueError(f"{path}: line before first ## : {l!r}")
+        cur.append(l)
+    return out
+
+def _plain_ko(t):
+    return re.sub(r"\s+", " ", t.replace("__", "")).strip()
 YEARS = {35: "2014", 37: "2014", 41: "2015", 47: "2016", 52: "2017", 64: "2019", 83: "2022", 91: "2023", 96: "2024", 102: "2025"}
 index = []
 ZH_PROBLEMS = []; ZH_DONE = []
@@ -235,6 +250,8 @@ for n in ORDER:
     ex = parse_tpk(os.path.join(SRC, "tpk", f"{n}.tpk"))
     _zp = os.path.join(SRC, "zh", f"{n}.zh")
     ZH = parse_zh(_zp) if os.path.exists(_zp) else None
+    _ep = os.path.join(SRC, "zh", f"{n}.exp")
+    EXP = parse_exp(_ep) if os.path.exists(_ep) else {}
     if ZH is not None: ZH_DONE.append(n)
     groups = []
     for g in ex["groups"]:
@@ -277,6 +294,24 @@ for n in ORDER:
                     Q["zh"] = zq
                     if z.get("E"): Q["exp"] = z["E"]
                     elif q["answer"]: ZH_PROBLEMS.append(f"{n} Q{q['n']}: missing E")
+            if q["n"] in EXP:
+                lines = EXP[q["n"]]
+                opts = [l for l in lines if re.match(r"^[①②③④][○×]", l)]
+                good = [l for l in opts if l[1] == "○"]
+                if len(opts) != 4: ZH_PROBLEMS.append(f"{n} Q{q['n']} exp: {len(opts)} option lines")
+                if len(good) != 1 or "①②③④".index(good[0][0]) + 1 != q["answer"]:
+                    ZH_PROBLEMS.append(f"{n} Q{q['n']} exp: ○ option does not match answer {q['answer']}")
+                src_ko = _plain_ko(" ".join(g["passage"] + q["text"] + q["options"] + q["poster"] + [q["box"] or "", q["prompt"] or ""]))
+                for qt in re.findall(r"「([^」]*[가-힣][^」]*)」", " ".join(lines)):
+                    pos = 0; ok = True
+                    for seg in [x for x in (_plain_ko(y) for y in qt.split("…")) if x]:
+                        i = src_ko.find(seg, pos)
+                        if i < 0: ok = False; break
+                        pos = i + len(seg)
+                    if not ok: ZH_PROBLEMS.append(f"{n} Q{q['n']} exp: quote not in text: {qt}")
+                Q["expD"] = lines
+            elif EXP and q["answer"] and q["n"] >= 30:
+                ZH_PROBLEMS.append(f"{n} Q{q['n']}: missing detailed explanation")
             G["qs"].append(Q)
         groups.append(G)
     json.dump({"id": n, "title": TITLES[n], "groups": groups}, open(f"{OUT}/e{n}.json", "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))

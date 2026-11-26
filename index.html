@@ -188,6 +188,15 @@ h2{font-size:18px;margin:0 0 12px;text-wrap:balance}
 .btn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 .exp{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 10px 10px 0;font-size:15px;line-height:1.75}
 .exp .lab{font-weight:700;color:var(--accent);margin-right:6px}
+.expd{display:grid;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.expd p{margin:0}
+.expd b{color:var(--ink);margin-right:4px}
+.expd .koq{font-family:var(--f-ko);font-size:15.5px;color:var(--ink)}
+.eo{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start}
+.eo .c{font-family:var(--f-num);font-size:12px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--muted);color:var(--muted);margin-top:2px}
+.eo.ok .c{background:var(--ok);border-color:var(--ok);color:var(--sheet)}
+.eo.ok{color:var(--ink)}
+.eo.no{color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 
@@ -323,6 +332,25 @@ function fill(node, tokens) {
     ul = null; if (i) node.append(' '); node.append(n);
   });
   return node;
+}
+function richText(node, text) {
+  text.split(/(「[^」]*」|__.+?__)/).forEach(part => {
+    if (/^「[^」]*[가-힣][^」]*」$/.test(part)) node.append(el('span', 'koq', part));
+    else if (/^__.+__$/.test(part)) node.append(el('span', 'ul', part.slice(2, -2)));
+    else if (part) node.append(part);
+  });
+  return node;
+}
+function expDetail(lines) {
+  const d = el('div', 'expd');
+  lines.forEach(l => {
+    let m = l.match(/^([①②③④])([○×])\s*(.*)$/);
+    if (m) { const r = el('div', 'eo ' + (m[2] === '○' ? 'ok' : 'no')); r.append(el('span', 'c', String('①②③④'.indexOf(m[1]) + 1))); r.append(richText(el('span'), m[3])); d.append(r); return; }
+    m = l.match(/^(思路|关键句|词汇|语法|注意)：\s*(.*)$/);
+    const p = el('p'); if (m) { p.append(el('b', '', m[1])); richText(p, m[2]); } else richText(p, l);
+    d.append(p);
+  });
+  return d;
 }
 function zhLine(text, tag) {
   const d = el(tag || 'div', 'zh'); if (!text) return d;
@@ -499,7 +527,7 @@ async function renderExam(id, n) {
     fb.append(ok ? '✓ 回答正确' : '✗ 回答错误：你选了 ' + CIRC[c - 1] + '，正确答案是 ' + CIRC[q.ans - 1]);
     const redo = el('button', 'btn sm ghost', '重做本题'); redo.type = 'button'; redo.dataset.act = 'redo'; fb.append(redo);
     card.append(fb);
-    if (q.exp) { const ex = zhLine(q.exp); ex.className = 'exp'; ex.prepend(el('span', 'lab', '解析')); card.append(ex); }
+    if (q.exp) { const ex = zhLine(q.exp); ex.className = 'exp'; ex.prepend(el('span', 'lab', '解析')); if (q.expD) ex.append(expDetail(q.expD)); card.append(ex); }
   } else if (q.ans) card.append(el('div', 'hint', touch ? '点选项前面的圆圈作答；点单词查释义。键盘 1–4 也可作答。' : '点击选项作答（键盘 1–4）。鼠标停在单词上查看释义。'));
   const nav = el('div', 'qnav');
   const prev = el('a', 'btn', '← 上一题'); if (n > 1) prev.href = '#e' + id + '-' + (n - 1); else { const pi = ORDER.indexOf(id); if (pi > 0) { prev.href = '#e' + ORDER[pi - 1] + '-50'; prev.textContent = '← 上一回'; } else prev.setAttribute('aria-disabled', 'true'); }
