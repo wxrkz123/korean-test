@@ -223,6 +223,7 @@ def parse_zh(path):
         m = re.match(r"^([PTBSOEQ]):\s?(.*)$", l)
         if not m or cur is None: raise ValueError(f"{path}: bad line {l!r}")
         k, v = m.group(1), m.group(2).strip()
+        if not v: raise ValueError(f"{path}: empty {k} line")
         if k in ("P", "T", "S"): cur.setdefault(k, []).append(v)
         elif k == "O": cur["O"] = [x.strip() for x in v.split(" | ")]
         else: cur[k] = v
@@ -269,7 +270,7 @@ for n in ORDER:
                         if not z.get("B"): ZH_PROBLEMS.append(f"{n} Q{q['n']}: missing B")
                         zq["b"] = z.get("B")
                     if q["poster"]:
-                        if not z["S"]: ZH_PROBLEMS.append(f"{n} Q{q['n']}: missing S")
+                        if len(z["S"]) != len(q["poster"]): ZH_PROBLEMS.append(f"{n} Q{q['n']}: {len(z['S'])} S for {len(q['poster'])} poster lines")
                         zq["s"] = z["S"]
                     if len(z.get("O", [])) != 4: ZH_PROBLEMS.append(f"{n} Q{q['n']}: O has {len(z.get('O', []))}")
                     zq["o"] = z.get("O", [])
