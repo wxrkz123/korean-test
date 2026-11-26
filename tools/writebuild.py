@@ -1,4 +1,4 @@
-"""Writing module (TOPIK II 51-54): source/write/*.wr, drill.tsv, expr.tsv -> data/write.json.
+"""Writing module (TOPIK II 51-54): source/write/*.wr -> data/write.json.
 
 .wr format ('#!' comments, blank lines ignored):
   === <id>                 one item (or one guide section in guide.wr)
@@ -184,33 +184,6 @@ def build_write(tok, src_dir, out_dir, problems):
     if dup:
         problems.append(f"write: duplicate ids {sorted(dup)}")
 
-    drill = []
-    for no, raw in enumerate(open(os.path.join(wd, "drill.tsv"), encoding="utf-8"), 1):
-        l = raw.rstrip("\n")
-        if not l.strip() or l.startswith("#"):
-            continue
-        cols = l.split("\t")
-        if len(cols) != 4 or not all(c.strip() for c in cols):
-            problems.append(f"drill.tsv:{no}: needs 4 non-empty tab-separated columns")
-            continue
-        ko, ans, zh, rule = (c.strip() for c in cols)
-        drill.append({"id": no, "t": tok(ko), "ko": ko, "a": [a.strip() for a in ans.split("|")], "z": zh, "r": rule})
-
-    expr, grp = [], None
-    for no, raw in enumerate(open(os.path.join(wd, "expr.tsv"), encoding="utf-8"), 1):
-        l = raw.rstrip("\n")
-        if not l.strip():
-            continue
-        if l.startswith("## "):
-            grp = {"g": l[3:].strip(), "e": []}
-            expr.append(grp)
-            continue
-        cols = l.split("\t")
-        if grp is None or len(cols) != 2:
-            problems.append(f"expr.tsv:{no}: bad line {l!r}")
-            continue
-        grp["e"].append([cols[0].strip(), cols[1].strip()])
-
-    json.dump({"guide": guide, "items": items, "drill": drill, "expr": expr},
+    json.dump({"guide": guide, "items": items},
               open(os.path.join(out_dir, "write.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
-    return len(items), len(drill), sum(len(g["e"]) for g in expr)
+    return len(items)
