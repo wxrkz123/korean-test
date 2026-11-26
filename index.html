@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>TOPIK 阅读刷题本</title>
+<title>TOPIK 刷题本</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -197,14 +197,154 @@ h2{font-size:18px;margin:0 0 12px;text-wrap:balance}
 .eo.ok .c{background:var(--ok);border-color:var(--ok);color:var(--sheet)}
 .eo.ok{color:var(--ink)}
 .eo.no{color:var(--muted)}
+/* writing */
+:root{--c2:#c9741f;--gj:#e6a4a4}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--c2:#f0a35e;--gj:#7a4545}}
+:root[data-theme="dark"]{--c2:#f0a35e;--gj:#7a4545}
+.wtop{display:grid;gap:12px;max-width:46rem;margin-bottom:22px}
+.wtop p{margin:0}
+.basics{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:10px;max-width:46rem;margin-bottom:22px}
+.basic{display:grid;gap:4px;background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink)}
+.basic:hover{border-color:var(--muted)}
+.basic b{font-size:16px}
+.basic span{font-size:13px;color:var(--muted)}
+.wtypes{display:grid;gap:16px;max-width:46rem}
+.wsec{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:grid;gap:10px}
+.wsec .hd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.wsec .no{font-family:var(--f-ko);font-weight:700;font-size:19px}
+.wsec .nm{font-weight:700;font-size:16px}
+.wsec .pt{font-size:13px;color:var(--muted)}
+details.guide summary{cursor:pointer;color:var(--accent);font-size:14px;width:max-content;max-width:100%}
+details.guide .expd{margin-top:8px;padding-top:8px;font-size:14.5px}
+.witems{display:grid;gap:6px}
+.wrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center;text-decoration:none;color:var(--ink);padding:8px 12px;border-radius:10px;border:1px solid var(--line)}
+.wrow:hover{border-color:var(--muted)}
+.wrow .kt{font-family:var(--f-ko);font-size:16px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wrow .zt{font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tag{font-size:11.5px;border-radius:6px;padding:0 6px;border:1px solid var(--line);color:var(--muted);white-space:nowrap;line-height:1.6}
+.tag.real{border-color:var(--accent);color:var(--accent)}
+.wrow .st{grid-row:1/3;grid-column:2;font-size:12.5px;color:var(--muted);text-align:right;white-space:nowrap}
+.wrow .st.ok{color:var(--ok)}
+.notice{border:2px solid var(--line);border-radius:12px;padding:16px clamp(14px,3vw,22px)}
+.notice .hd{text-align:center;font-weight:700}
+.wbk{display:inline-block;min-width:5.5em;padding:0 .4em;border-bottom:2px solid var(--accent);color:var(--accent);font-weight:600;text-align:center;line-height:1.5;text-indent:0}
+.wbk.filled{min-width:0;font-weight:500;color:var(--ink);background:var(--accent-soft);border-radius:4px 4px 0 0;text-align:left}
+.bullets{margin:8px 0 0;padding-left:1.3em}
+.bullets li+li{margin-top:2px}
+.ansbox{display:grid;gap:14px;border-top:1px dashed var(--line);padding-top:16px}
+.field{display:grid;gap:6px}
+.field label{font-weight:600;font-size:14px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.field .mk2{font-family:var(--f-ko);color:var(--accent);font-size:18px}
+textarea.wt{width:100%;font-family:var(--f-ko);font-size:17px;line-height:1.85;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--sheet);color:var(--ink);resize:vertical;min-height:3.2em}
+textarea.wt.sm{font-family:var(--f-ui);font-size:14.5px;line-height:1.6}
+textarea.wt:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+.cnt{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.cnt b{font-family:var(--f-num);font-weight:500;font-size:15px;color:var(--ink)}
+.cnt.ok b{color:var(--ok)} .cnt.over b{color:var(--bad)}
+.meter2{flex:1;min-width:140px;height:8px;border-radius:99px;background:var(--soft);position:relative;overflow:hidden}
+.meter2 i{position:absolute;inset:0 auto 0 0;background:var(--muted);border-radius:99px}
+.cnt.ok .meter2 i{background:var(--ok)} .cnt.over .meter2 i{background:var(--bad)}
+.meter2 .band{position:absolute;top:0;bottom:0;background:var(--ok-bg)}
+details.outline summary{cursor:pointer;font-weight:600;font-size:14px;width:max-content;max-width:100%}
+.olines{display:grid;gap:8px;margin-top:10px}
+.wacts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.wacts .sv{font-size:12.5px;color:var(--muted);margin-left:auto}
+.wnote{font-size:13px;color:var(--muted)}
+.gjwrap{overflow-x:auto;padding:4px 0}
+.gjinfo{font-size:13px;color:var(--muted);margin-bottom:6px}
+.wgj{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));border-top:1px solid var(--gj);border-left:1px solid var(--gj);width:min(100%,36rem);min-width:20rem;font-family:var(--f-ko)}
+.wgj span{aspect-ratio:1;border-right:1px solid var(--gj);border-bottom:1px solid var(--gj);display:grid;place-items:center;font-size:clamp(11px,2.6vw,16px);line-height:1;position:relative;letter-spacing:-.04em}
+.wgj span.c100{background:linear-gradient(135deg,transparent 78%,var(--gj) 78%,var(--gj) 82%,transparent 82%)}
+.wchart{border:1px solid var(--line);border-radius:12px;padding:16px clamp(12px,3vw,20px);display:grid;gap:16px;margin:0;background:var(--sheet)}
+.wchart .ct{text-align:center;font-weight:700;font-family:var(--f-ko);font-size:18px}
+.wchart .cn{text-align:center;font-size:13.5px;color:var(--muted);font-family:var(--f-ko);margin-top:-10px}
+.panel{display:grid;gap:10px}
+.panel .ph{font-family:var(--f-ko);font-weight:600;font-size:15.5px}
+.hb{display:grid;grid-template-columns:minmax(5.5em,max-content) minmax(0,1fr) 3.2em;gap:8px 10px;align-items:center;font-family:var(--f-ko);font-size:15px}
+.trk{height:14px;background:var(--soft);border-radius:4px;overflow:hidden}
+.trk i{display:block;height:100%;border-radius:4px;background:var(--accent)}
+.hb .v,.gb .v{font-family:var(--f-num);font-size:13px;text-align:right}
+.gb{display:grid;grid-template-columns:minmax(5.5em,max-content) minmax(0,1fr);gap:10px 10px;align-items:center;font-family:var(--f-ko);font-size:15px}
+.gb .bars{display:grid;gap:3px}
+.gb .br{display:grid;grid-template-columns:minmax(0,1fr) 3.2em;gap:6px;align-items:center}
+.gb .br i{display:block;height:11px;border-radius:3px}
+.s0,.trk i.s0{background:var(--accent)} .s1,.trk i.s1{background:var(--c2)}
+.lg{display:flex;gap:14px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.lg span{display:inline-flex;align-items:center;gap:5px}
+.lg i{display:inline-block;width:12px;height:12px;border-radius:3px}
+.lsvg{width:100%;height:auto;display:block;max-width:34rem;margin:0 auto}
+.lsvg .axis{stroke:var(--line);stroke-width:1.5}
+.lsvg .seg{stroke:var(--accent);stroke-width:3;fill:none}
+.lsvg .dash{stroke-dasharray:7 6}
+.lsvg .pt{fill:var(--sheet);stroke:var(--accent);stroke-width:3}
+.lsvg .vl{fill:var(--ink);font:500 15px var(--f-num);text-anchor:middle}
+.lsvg .xl{fill:var(--muted);font:14px var(--f-ui);text-anchor:middle}
+.cboxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));gap:10px}
+.cbox{border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-family:var(--f-ko);font-size:15px}
+.cbox .bh{font-weight:700;margin-bottom:4px}
+.cbox ul{margin:0;padding-left:1.1em}
+.tree{display:grid;gap:12px;justify-items:center}
+.tree .root{border:2px solid var(--line);border-radius:999px;padding:6px 24px;font-family:var(--f-ko);font-weight:700;font-size:17px;background:var(--soft)}
+.tree .kids{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%}
+@media (max-width:600px){.tree .kids{grid-template-columns:minmax(0,1fr)}}
+.tree .kid{border:1px solid var(--line);border-radius:10px;overflow:hidden;font-family:var(--f-ko);font-size:15px}
+.tree .kh{background:var(--soft);text-align:center;font-weight:700;padding:6px}
+.tree .ks{text-align:center;padding:6px;border-bottom:1px solid var(--line)}
+.tree .kid ul{margin:0;padding:8px 10px 8px 1.5em}
+.model{border-left:3px solid var(--ok);background:var(--ok-bg);padding:12px 16px;border-radius:0 12px 12px 0;display:grid;gap:10px}
+.model .lab{font-weight:700;color:var(--ok)}
+.model .ko p{text-indent:1em}
+.model .zh{margin-top:0}
+.model .expd{margin-top:0;padding-top:0;border-top:0}
+.model .alt{font-size:13.5px;color:var(--muted)}
+.model .alt span{font-family:var(--f-ko);color:var(--ink)}
+.xchips{display:flex;flex-wrap:wrap;gap:6px}
+.xchips span{border:1px solid var(--line);background:var(--sheet);border-radius:8px;padding:3px 9px;font-size:13.5px}
+.xchips b{font-family:var(--f-ko);font-weight:600;margin-right:5px}
+.ai{border:1px solid var(--accent);border-radius:12px;padding:12px 16px;display:grid;gap:8px;background:var(--sheet)}
+.ai .ahd{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.ai .ahd .lab{font-weight:700;color:var(--accent);font-size:15px}
+.ai .out{font-size:15px;line-height:1.75;display:grid;gap:3px;overflow-wrap:anywhere}
+.ai .out .ah{font-weight:700;color:var(--accent);margin-top:6px}
+.ai .out .ah:first-child{margin-top:0}
+.ai .out .kl{font-family:var(--f-ko);font-size:16px}
+.ai .err{color:var(--bad);font-size:14px}
+.thinking{color:var(--muted)}
+.drl{display:grid;gap:10px;max-width:46rem}
+.dq{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:8px}
+.dq .top{display:flex;gap:10px;align-items:baseline}
+.dq .no{font-family:var(--f-num);font-size:12px;color:var(--muted);min-width:1.8em}
+.dq .ko{font-size:18px;line-height:1.7}
+.dq .zh{margin:0 0 0 2.4em}
+.dq .in{display:flex;gap:8px;margin-left:2.4em}
+.dq input{flex:1;min-width:0;font-family:var(--f-ko);font-size:17px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--sheet);color:var(--ink)}
+.dq input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+.dq .res{margin-left:2.4em;border-radius:10px;padding:8px 12px;font-size:14px;display:grid;gap:4px}
+.dq .res.ok{background:var(--ok-bg);color:var(--ok)}
+.dq .res.bad{background:var(--bad-bg)}
+.dq .res.bad .t{color:var(--bad);font-weight:500}
+.dq .res .ans{font-family:var(--f-ko);font-size:16px;color:var(--ink)}
+.dq .res .rule{color:var(--muted)}
+.dq .res .btn{justify-self:start}
+.dq.done{border-color:var(--ok)}
+@media (max-width:560px){.dq .zh,.dq .in,.dq .res{margin-left:0}}
+.xgroups{display:grid;gap:14px;max-width:46rem}
+.xg{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.xg h2{font-size:15px;margin:0 0 6px}
+.xe{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:4px 14px;padding:6px 0;border-top:1px solid var(--line);align-items:baseline}
+.xe:first-of-type{border-top:0}
+.xe .k{font-family:var(--f-ko);font-size:16px}
+.xe .z{font-size:14px;color:var(--muted)}
+@media (max-width:560px){.xe{grid-template-columns:minmax(0,1fr)}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 
 <header class="bar">
   <div class="wrap">
-    <a class="brand" href="#home">TOPIK <span class="ko">읽기</span> 刷题本</a>
+    <a class="brand" href="#home">TOPIK <span class="ko">읽기·쓰기</span> 刷题本</a>
     <nav class="nav" aria-label="主导航">
-      <a href="#home" data-nav="home">真题</a>
+      <a href="#home" data-nav="home">阅读</a>
+      <a href="#write" data-nav="write">写作</a>
       <a href="#wrong" data-nav="wrong">错题本<span class="n" id="nWrong"></span></a>
       <a href="#vocab" data-nav="vocab">生词本<span class="n" id="nVocab"></span></a>
     </nav>
@@ -230,9 +370,10 @@ const LS = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage blocked */ } }
 };
-const S = { progress: LS.get('topik.progress', {}), vocab: LS.get('topik.vocab', {}), pos: LS.get('topik.pos', {}) };
+const S = { progress: LS.get('topik.progress', {}), vocab: LS.get('topik.vocab', {}), pos: LS.get('topik.pos', {}), write: LS.get('topik.write', {}), wfb: LS.get('topik.wfb', {}) };
+const SYNCED = ['progress', 'vocab', 'write', 'wfb'];
 let remote = null, syncState = 'local';
-const wq = { progress: { busy: false, dirty: false, timer: 0 }, vocab: { busy: false, dirty: false, timer: 0 } };
+const wq = {}; SYNCED.forEach(n => { wq[n] = { busy: false, dirty: false, timer: 0 }; });
 function mergeItems(a, b) { const o = Object.assign({}, a); for (const k in b) { if (!o[k] || (b[k] && (b[k].t || 0) > (o[k].t || 0))) o[k] = b[k]; } return o; }
 function pruneVocab(v) { const cut = Date.now() - 60 * 864e5; for (const k in v) if (v[k] && v[k].d && v[k].t < cut) delete v[k]; return v; }
 function persist(name) { LS.set('topik.' + name, S[name]); if (remote) { const q = wq[name]; clearTimeout(q.timer); q.timer = setTimeout(() => flush(name), 1200); } }
@@ -256,22 +397,24 @@ async function initRemote() {
     const [db, user] = await Promise.all([Promise.race([window.claude.use('db'), timeout]), Promise.race([window.claude.use('user'), timeout])]);
     if (!db || !user) return;
     const uid = await user.id(); if (!uid) return;
-    const refs = { progress: db.doc('data/users/' + uid + '/progress'), vocab: db.doc('data/users/' + uid + '/vocab') };
-    const snaps = await Promise.race([Promise.all([refs.progress.get(), refs.vocab.get()]), timeout]);
+    const refs = {}; SYNCED.forEach(n => { refs[n] = db.doc('data/users/' + uid + '/' + n); });
+    const snaps = await Promise.race([Promise.all(SYNCED.map(n => refs[n].get())), timeout]);
     if (!snaps) return;
     remote = { refs };
-    ['progress', 'vocab'].forEach((name, i) => {
+    SYNCED.forEach((name, i) => {
       const r = (snaps[i].exists && snaps[i].data() && snaps[i].data().items) || {};
       const merged = mergeItems(S[name], r);
       if (name === 'vocab') pruneVocab(merged);
+      if (name === 'wfb') pruneFb(merged);
       const changed = JSON.stringify(merged) !== JSON.stringify(r);
       S[name] = merged; LS.set('topik.' + name, merged);
       if (changed) persist(name);
     });
-    syncState = 'remote'; renderSync(); refreshCounts(); route();
+    syncState = 'remote'; renderSync(); refreshCounts(); if (!document.activeElement || !/^(TEXTAREA|INPUT)$/.test(document.activeElement.tagName)) route();
   } catch (e) { remote = null; }
 }
-function renderSync() { const n = $('#syncLine'); if (n) n.textContent = syncState === 'remote' ? '进度和生词本已保存到你的账号，只有你自己能看到，换设备打开也在。' : '进度和生词本保存在这个浏览器里。'; }
+function renderSync() { const n = $('#syncLine'); if (n) n.textContent = syncState === 'remote' ? '做题进度、生词本和写作草稿已保存到你的账号，只有你自己能看到，换设备打开也在。' : '做题进度、生词本和写作草稿保存在这个浏览器里。'; }
+function pruneFb(v) { const ks = Object.keys(v).sort((a, b) => ((v[b] && v[b].t) || 0) - ((v[a] && v[a].t) || 0)); ks.slice(24).forEach(k => delete v[k]); return v; }
 
 /* ---------------- data ---------------- */
 async function getJSON(u) { const r = await fetch(u); if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }
@@ -441,6 +584,7 @@ function renderHome() {
   const nt = nextTarget(); const go = el('div'); go.style.display = 'flex'; go.style.gap = '10px'; go.style.flexWrap = 'wrap';
   if (nt) { const b = el('a', 'btn pri', (!Object.values(S.progress).some(v => v && v.c) ? '从' + meta(nt.id).title + '第' + nt.n + '题开始' : '继续：' + meta(nt.id).title + ' 第' + nt.n + '题') + ' →'); b.href = '#e' + nt.id + '-' + nt.n; go.append(b); }
   else go.append(el('span', 'muted', '500 题全部做完了。可以去错题本复习。'));
+  const wb = el('a', 'btn', '写作练习 →'); wb.href = '#write'; go.append(wb);
   intro.append(go);
   const sync = el('p', 'sync'); sync.id = 'syncLine'; intro.append(sync);
   view.append(intro);
@@ -623,16 +767,448 @@ function renderVocab() {
     const k = el('div', 'k', v.k); k.append(el('span', 'ty', TY[v.ty] || '单词')); it.append(k);
     const zh = el('div', 'zh', v.zh || '（暂无释义）'); zh.title = '点击显示'; it.append(zh);
     if (v.ctx) { const cx = el('div', 'cx'); const i = v.hit ? v.ctx.indexOf(v.hit) : -1; if (i >= 0) { cx.append(v.ctx.slice(0, i), el('b', '', v.hit), v.ctx.slice(i + v.hit.length)); } else cx.textContent = v.ctx; it.append(cx); }
-    if (v.src) { const [id, n] = v.src.split('-'); const s = el('div', 'src'); const a = el('a', '', `出自 第${id}回 第${n}题`); a.href = '#e' + id + '-' + n; s.append(a); it.append(s); }
+    if (v.src && v.src.startsWith('w:')) { const wid = v.src.slice(2); const s = el('div', 'src'); const a = el('a', '', wid === 'expr' ? '出自 写作 · 常用表达' : wid === 'drill' ? '出自 写作 · 文体转换练习' : '出自 写作 第' + wid.split('-')[0] + '题'); a.href = '#w/' + wid; s.append(a); it.append(s); }
+    else if (v.src) { const [id, n] = v.src.split('-'); const s = el('div', 'src'); const a = el('a', '', `出自 第${id}回 第${n}题`); a.href = '#e' + id + '-' + n; s.append(a); it.append(s); }
     const del = el('button', 'btn sm ghost del', '移除'); del.type = 'button'; del.dataset.act = 'vdel'; del.dataset.k = v.ty + ':' + v.k; it.append(del);
     vl.append(it);
   });
   view.append(vl);
 }
 
+/* ---------------- writing (51–54) ---------------- */
+let WR = null, wcur = null, SAMPLE;            // SAMPLE: undefined = still checking, null = no AI here, function = ask Claude
+const wopen = {};                               // per item: model answer shown
+let aiRun = null;                               // {id, ctl, node, text}
+const FULL = { 51: 10, 52: 10, 53: 30, 54: 50 };
+const RANGE = { 53: [200, 300], 54: [600, 700] };
+async function loadWrite() {
+  if (!WR) WR = getJSON('data/write.json').then(d => { d.byId = {}; d.items.forEach(x => { d.byId[x.id] = x; }); return d; }).catch(e => { WR = null; throw e; });
+  return WR;
+}
+async function initSample() {
+  if (!window.claude || typeof window.claude.use !== 'function') { SAMPLE = null; refreshAi(); return; }
+  try { SAMPLE = await Promise.race([window.claude.use('sample'), new Promise(r => setTimeout(() => r(null), 10000))]); } catch (e) { SAMPLE = null; }
+  refreshAi();
+}
+function refreshAi() { document.querySelectorAll('[data-aislot]').forEach(n => fillAiSlot(n)); }
+const typeName = (W, t) => (W.guide[t] && W.guide[t].h) || '';
+const wkey = id => 'i:' + id;
+function draft(id) { return S.write[wkey(id)] || {}; }
+function wcount(s) { return (s || '').replace(/\r?\n/g, '').length; }
+let wsaveT = 0;
+function saveDraft(id, patch) {
+  S.write[wkey(id)] = Object.assign({}, draft(id), patch, { t: Date.now() });
+  LS.set('topik.write', S.write);
+  clearTimeout(wsaveT); wsaveT = setTimeout(() => persist('write'), 600);
+  const sv = $('#wsaved'); if (sv) sv.textContent = '已自动保存';
+}
+function hasDraft(it) { const d = draft(it.id); return it.type <= 52 ? (d.a || []).some(x => x && x.trim()) : !!(d.x && d.x.trim()); }
+function T(v) { return v && typeof v === 'object' && v.t ? fill(el('span'), v.t) : document.createTextNode(v == null ? '' : String(v)); }
+function P(v) { return v && typeof v === 'object' && v.t ? plain(v.t) : String(v == null ? '' : v); }
+function noteBlock(lines) {
+  const d = el('div', 'expd');
+  lines.forEach(l => { const m = l.match(/^(思路|结构|文体|注意|评分|建议|任务|句子)：\s*(.*)$/); const p = el('p'); if (m) { p.append(el('b', '', m[1])); richText(p, m[2]); } else richText(p, l); d.append(p); });
+  return d;
+}
+
+/* charts for question 53 */
+function renderChart(c) {
+  const f = el('figure', 'wchart');
+  if (c.type === 'tree') {
+    const tr = el('div', 'tree'); const root = el('div', 'root'); root.append(T(c.root)); tr.append(root);
+    const kids = el('div', 'kids');
+    c.nodes.forEach(n => { const k = el('div', 'kid'); const h = el('div', 'kh'); h.append(T(n.h)); const sb = el('div', 'ks'); sb.append(T(n.sub)); const ul = el('ul'); n.lines.forEach(l => { const li = el('li'); li.append(T(l)); ul.append(li); }); k.append(h, sb, ul); kids.append(k); });
+    tr.append(kids); f.append(tr); return f;
+  }
+  if (c.title) { const t = el('div', 'ct'); t.append(T(c.title)); f.append(t); }
+  if (c.note) { const t = el('div', 'cn'); t.append(T(c.note)); f.append(t); }
+  (c.panels || []).forEach(p => f.append(renderPanel(p)));
+  if (c.boxes) { const bx = el('div', 'cboxes'); c.boxes.forEach(b => { const d = el('div', 'cbox'); const h = el('div', 'bh'); h.append(T(b.h)); const ul = el('ul'); b.lines.forEach(l => { const li = el('li'); li.append(T(l)); ul.append(li); }); d.append(h, ul); bx.append(d); }); f.append(bx); }
+  return f;
+}
+function renderPanel(p) {
+  const d = el('div', 'panel'); const unit = P(p.unit || '');
+  if (p.title) { const t = el('div', 'ph'); t.append(T(p.title)); d.append(t); }
+  if (p.type === 'bar') {
+    const max = Math.max(...p.items.map(x => x[1])); const g = el('div', 'hb');
+    p.items.forEach(([lab, v]) => { const l = el('span'); l.append(T(lab)); const tr = el('span', 'trk'); const i = el('i'); i.style.width = (v / max * 100) + '%'; tr.append(i); g.append(l, tr, el('span', 'v', v + unit)); });
+    d.append(g);
+  } else if (p.type === 'gbar') {
+    const lg = el('div', 'lg'); p.series.forEach((s, i) => { const sp = el('span'); sp.append(el('i', 's' + i), P(s)); lg.append(sp); }); d.append(lg);
+    const max = Math.max(...p.items.flatMap(x => x.slice(1))); const g = el('div', 'gb');
+    p.items.forEach(it => { const l = el('span'); l.append(T(it[0])); const bars = el('span', 'bars'); it.slice(1).forEach((v, i) => { const br = el('span', 'br'); const tr = el('span', 'trk'); tr.style.height = '11px'; const b = el('i', 's' + i); b.style.width = (v / max * 100) + '%'; tr.append(b); br.append(tr, el('span', 'v', v + unit)); bars.append(br); }); g.append(l, bars); });
+    d.append(g);
+  } else if (p.type === 'line') d.append(lineSvg(p, unit));
+  return d;
+}
+function lineSvg(p, unit) {
+  const NS = 'http://www.w3.org/2000/svg', W = 560, H = 236, L = 44, R = 44, TP = 34, B = 48;
+  const vals = p.items.map(x => x[1]), n = vals.length, max = Math.max(...vals) * 1.15, fc = p.forecast == null ? n : p.forecast;
+  const X = i => L + (n === 1 ? (W - L - R) / 2 : i * (W - L - R) / (n - 1)), Y = v => TP + (H - TP - B) * (1 - v / max);
+  const mk = (tag, at, cls) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); if (cls) e.setAttribute('class', cls); return e; };
+  const svg = mk('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': P(p.title) + '：' + p.items.map((x, i) => P(x[0]) + ' ' + x[1] + unit + (i >= fc ? '（预测）' : '')).join('，') }, 'lsvg');
+  svg.append(mk('line', { x1: L - 20, x2: W - R + 20, y1: H - B, y2: H - B }, 'axis'));
+  for (let i = 0; i < n - 1; i++) svg.append(mk('line', { x1: X(i), y1: Y(vals[i]), x2: X(i + 1), y2: Y(vals[i + 1]) }, 'seg' + (i + 1 >= fc ? ' dash' : '')));
+  p.items.forEach((x, i) => {
+    svg.append(mk('circle', { cx: X(i), cy: Y(vals[i]), r: 5.5 }, 'pt'));
+    const v = mk('text', { x: X(i), y: Y(vals[i]) - 13 }, 'vl'); v.textContent = vals[i] + unit; svg.append(v);
+    const t = mk('text', { x: X(i), y: H - B + 22 }, 'xl'); t.textContent = P(x[0]); svg.append(t);
+    if (i >= fc) { const e = mk('text', { x: X(i), y: H - B + 40 }, 'xl'); e.textContent = '(예상)'; svg.append(e); }
+  });
+  return svg;
+}
+function chartPlain(c) {
+  const out = [];
+  if (c.type === 'tree') { out.push(P(c.root)); c.nodes.forEach(n => out.push('- ' + P(n.h) + '（' + P(n.sub) + '）：' + n.lines.map(P).join(' '))); return out.join('\n'); }
+  if (c.title) out.push(P(c.title)); if (c.note) out.push(P(c.note));
+  (c.panels || []).forEach(p => {
+    const u = P(p.unit || ''); out.push('[' + P(p.title) + ']');
+    if (p.type === 'gbar') p.items.forEach(it => out.push('- ' + P(it[0]) + ': ' + p.series.map((s, i) => P(s) + ' ' + it[i + 1] + u).join(', ')));
+    else p.items.forEach((it, i) => out.push('- ' + P(it[0]) + ': ' + it[1] + u + (p.forecast != null && i >= p.forecast ? '（预测）' : '')));
+  });
+  (c.boxes || []).forEach(b => out.push('[' + P(b.h) + '] ' + b.lines.map(P).join(' / ')));
+  return out.join('\n');
+}
+
+/* 원고지 (manuscript paper) preview: 20 cells a row, paragraph indent, two digits/latin letters share a cell */
+function gaoji(text, minCells) {
+  const cells = [];
+  text.split(/\n+/).map(x => x.trim()).filter(Boolean).forEach(p => {
+    while (cells.length % 20) cells.push('');
+    cells.push('');
+    for (let i = 0; i < p.length;) {
+      const ch = p[i];
+      if (ch === ' ' && cells.length % 20 === 0) { i++; continue; }
+      if (/[0-9A-Za-z]/.test(ch) && /[0-9A-Za-z]/.test(p[i + 1] || '')) { cells.push(ch + p[i + 1]); i += 2; continue; }
+      cells.push(ch); i++;
+    }
+  });
+  let used = cells.length; while (used && cells[used - 1] === '') used--;
+  while (cells.length < minCells || cells.length % 20) cells.push('');
+  const g = el('div', 'wgj'); g.setAttribute('aria-hidden', 'true');
+  cells.forEach((c, i) => { const sp = el('span', (i + 1) % 100 === 0 ? 'c100' : '', c); g.append(sp); });
+  return { g, used };
+}
+
+/* writing home */
+function itemStatus(it) {
+  if (S.wfb[it.id]) return ['AI 已批改', 'ok'];
+  if (it.type <= 52) { const a = draft(it.id).a || []; const k = a.filter(x => x && x.trim()).length; return k ? ['已填 ' + k + '/2', ''] : ['未写', '']; }
+  const n = wcount(draft(it.id).x); return n ? ['草稿 ' + n + ' 字', ''] : ['未写', ''];
+}
+async function renderWHome() {
+  setNav('write'); const W = await loadWrite(); view.replaceChildren();
+  const top = el('section', 'wtop');
+  top.append(el('h1', '', 'TOPIK II 写作练习'));
+  top.append(el('p', 'muted', '51–54 题四种题型，每种都有第37回真题和按 TOPIK 格式编写的模拟题。题目里的单词同样可以悬停/点按查中文；写的内容自动保存。'));
+  const ai = el('p', 'wnote'); ai.dataset.aislot = 'home'; fillAiSlot(ai); top.append(ai);
+  view.append(top);
+  const bs = el('div', 'basics');
+  const dn = W.drill.filter(d => (S.write['d:' + d.id] || {}).ok).length;
+  const b1 = el('a', 'basic'); b1.href = '#w/drill'; b1.append(el('b', '', '文体转换练习'), el('span', '', '把“-아요/어요”口语句改成文章用的“-다”体 · 已做对 ' + dn + '/' + W.drill.length));
+  const b2 = el('a', 'basic'); b2.href = '#w/expr'; b2.append(el('b', '', '常用表达'), el('span', '', '51–54 题高分句型 ' + W.expr.reduce((a, g) => a + g.e.length, 0) + ' 条，可收进生词本'));
+  bs.append(b1, b2); view.append(bs);
+  const ts = el('div', 'wtypes');
+  [51, 52, 53, 54].forEach(t => {
+    const g = W.guide[t] || { h: '', p: '', n: [] }; const sec = el('section', 'wsec'); sec.id = 'wt' + t;
+    const hd = el('div', 'hd'); hd.append(el('span', 'no', t + '번'), el('span', 'nm', g.h), el('span', 'pt', g.p)); sec.append(hd);
+    const det = el('details', 'guide'); det.append(el('summary', '', '题型攻略'), noteBlock(g.n)); sec.append(det);
+    const list = el('div', 'witems');
+    W.items.filter(x => x.type === t).forEach(it => {
+      const a = el('a', 'wrow'); a.href = '#w/' + it.id;
+      a.append(el('span', 'kt', it.h));
+      const z = el('span', 'zt'); z.append(el('span', 'tag' + (/真题/.test(it.src) ? ' real' : ''), it.src), it.hz); a.append(z);
+      const [st, c] = itemStatus(it); a.append(el('span', 'st ' + c, st));
+      list.append(a);
+    });
+    sec.append(list); ts.append(sec);
+  });
+  view.append(ts); renderSync();
+}
+
+/* one writing item */
+function fillAiSlot(n) {
+  const kind = n.dataset.aislot;
+  if (kind === 'home') {
+    n.textContent = SAMPLE === undefined ? '' : SAMPLE ? '写完可以点「AI 批改」：Claude 会按 TOPIK 评分标准估分、逐句指出问题，并给出修改后的全文。每次批改会用到你自己的 Claude 用量。' : 'AI 批改需要在 Claude 里打开本页面才能使用；在这里可以对照参考答案和解析自己检查。';
+    return;
+  }
+  n.replaceChildren();
+  if (SAMPLE === undefined) { const b = el('button', 'btn', 'AI 批改'); b.type = 'button'; b.disabled = true; b.title = '正在检查能否使用 AI'; n.append(b); return; }
+  if (!SAMPLE) { n.append(el('span', 'wnote', 'AI 批改需在 Claude 中打开本页')); return; }
+  const b = el('button', 'btn pri', aiRun && wcur && aiRun.id === wcur.id ? '批改中…' : 'AI 批改'); b.type = 'button'; b.dataset.act = 'wai';
+  if (aiRun) b.disabled = true;
+  n.append(b);
+}
+function toggleWZh() { if (!wcur) return; LS.set('topik.zh', !LS.get('topik.zh', false)); const y = window.scrollY; renderWItem(wcur.id).then(() => window.scrollTo(0, y)); }
+function blanksIn(node) {
+  node.querySelectorAll('.mk').forEach(m => { const mt = m.textContent.match(/^\((㉠|㉡)\)(.*)$/); if (!mt) return; const b = el('span', 'wbk', mt[1]); b.dataset.mk = mt[1] === '㉠' ? 0 : 1; m.replaceWith(b, mt[2]); });
+}
+function syncBlanks(vals) { document.querySelectorAll('.wbk').forEach(b => { const v = (vals[+b.dataset.mk] || '').trim(); b.textContent = v || (b.dataset.mk === '0' ? '㉠' : '㉡'); b.classList.toggle('filled', !!v); }); }
+function autoGrow(t) { t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight + 2, window.innerHeight * 0.8) + 'px'; }
+function counter(t, n) {
+  const [lo, hi] = RANGE[t]; const c = el('div', 'cnt'); c.id = 'wcnt';
+  const upd = k => {
+    c.className = 'cnt' + (k > hi ? ' over' : k >= lo ? ' ok' : ''); c.replaceChildren();
+    const lab = el('span'); lab.append('字数 ', el('b', '', String(k)), ' / ' + lo + '～' + hi); c.append(lab);
+    const m = el('span', 'meter2'); const top = hi * 1.15; const band = el('span', 'band'); band.style.left = (lo / top * 100) + '%'; band.style.width = ((hi - lo) / top * 100) + '%'; const i = el('i'); i.style.width = Math.min(100, k / top * 100) + '%'; m.append(band, i); c.append(m);
+    c.append(el('span', '', k > hi ? '超出 ' + (k - hi) + ' 字' : k >= lo ? '字数合适' : '还差 ' + (lo - k) + ' 字'));
+  };
+  upd(n); c.upd = upd; return c;
+}
+async function renderWItem(id) {
+  setNav('write'); const W = await loadWrite(); const it = W.byId[id];
+  if (!it) { location.hash = '#write'; return; }
+  wcur = { id, it }; const zhOn = LS.get('topik.zh', false); const src = 'w:' + id; const d = draft(id);
+  view.replaceChildren();
+  const head = el('div', 'xhead');
+  const back = el('a', 'btn sm ghost', '← 写作练习'); back.href = '#write'; head.append(back);
+  const ttl = el('div', 'ttl', '第' + it.type + '题 · ' + typeName(W, it.type)); ttl.append(el('span', '', it.h)); head.append(ttl);
+  head.append(el('span', 'tag' + (/真题/.test(it.src) ? ' real' : ''), it.src));
+  const zb = el('button', 'btn sm' + (zhOn ? ' on' : ''), zhOn ? '隐藏中文' : '显示中文翻译'); zb.type = 'button'; zb.dataset.act = 'wzh'; zb.title = '快捷键 T'; zb.style.marginLeft = 'auto'; head.append(zb);
+  view.append(head);
+  const card = el('article', 'card'); card.dataset.src = src; card.style.maxWidth = '46rem'; view.append(card);
+  const ins = el('div', 'ins'); ins.dataset.src = src; ins.append('※ [' + it.type + '] '); fill(ins, it.ins); card.append(ins);
+  if (zhOn) { const z = zhLine(it.insZh); z.style.marginTop = '-10px'; card.append(z); }
+  if (it.type === 51) {
+    const nb = el('div', 'ko notice'); it.k.forEach(k => { nb.append(para(k.t, src, k.hd ? 'hd' : '')); if (zhOn) { const z = zhLine(k.z); if (k.hd) z.style.textAlign = 'center'; nb.append(z); } }); card.append(nb);
+  } else if (it.type === 52) {
+    const ps = el('div', 'ko passage'); it.k.forEach(k => { ps.append(para(k.t, src)); if (zhOn) ps.append(zhLine(k.z)); }); card.append(ps);
+  } else if (it.type === 53) {
+    card.append(renderChart(it.chart)); if (zhOn) it.cz.forEach(z => card.append(zhLine(z)));
+  } else {
+    const bx = el('div', 'ko boxed'); it.k.forEach(k => { bx.append(para(k.t, src)); if (zhOn) bx.append(zhLine(k.z)); });
+    const ul = el('ul', 'bullets'); it.l.forEach(l => { const li = el('li'); li.append(para(l.t, src, '', 'span')); if (zhOn) li.append(zhLine(l.z)); ul.append(li); }); bx.append(ul); card.append(bx);
+  }
+  blanksIn(card);
+  // answer area
+  const ab = el('section', 'ansbox'); ab.setAttribute('aria-label', '作答区');
+  let getAns;
+  if (it.type <= 52) {
+    const vals = (d.a || ['', '']).slice(); const tas = [];
+    ['㉠', '㉡'].forEach((mk, i) => {
+      const f = el('div', 'field'); const lb = el('label'); lb.htmlFor = 'wa' + i; lb.append(el('span', 'mk2', mk), it.type === 51 ? '写一个完整的句子（“-습니다”体）' : '写一个完整的句子（“-다”体）'); f.append(lb);
+      const ta = el('textarea', 'wt'); ta.id = 'wa' + i; ta.rows = 2; ta.value = vals[i] || ''; ta.lang = 'ko'; ta.spellcheck = false; ta.setAttribute('autocomplete', 'off');
+      ta.addEventListener('input', () => { vals[i] = ta.value; syncBlanks(vals); autoGrow(ta); saveDraft(id, { a: vals.slice() }); });
+      f.append(ta); ab.append(f); tas.push(ta);
+    });
+    syncBlanks(vals); requestAnimationFrame(() => tas.forEach(autoGrow));
+    getAns = () => vals.slice();
+  } else {
+    if (it.type === 54) {
+      const det = el('details', 'outline'); if ((d.o || []).some(x => x)) det.open = true;
+      det.append(el('summary', '', '先列提纲（可以用中文写要点）'));
+      const ol = el('div', 'olines'); const os = (d.o || ['', '', '']).slice();
+      [['서론', '怎么引出话题？用一个现象或问题开头'], ['본론', '按题目的问题顺序，每个问题写1～2个观点和理由'], ['결론', '总结观点，提出建议或展望']].forEach(([h, ph], i) => {
+        const f = el('div', 'field'); const lb = el('label'); lb.htmlFor = 'wo' + i; lb.append(el('span', 'mk2', h)); f.append(lb);
+        const ta = el('textarea', 'wt sm'); ta.id = 'wo' + i; ta.rows = 2; ta.placeholder = ph; ta.value = os[i] || '';
+        ta.addEventListener('input', () => { os[i] = ta.value; saveDraft(id, { o: os.slice() }); });
+        f.append(ta); ol.append(f);
+      });
+      det.append(ol); ab.append(det);
+    }
+    const f = el('div', 'field'); const lb = el('label'); lb.htmlFor = 'wx'; lb.append('正文', el('span', 'wnote', '“-다”体 · 不写题目 · 换段直接回车')); f.append(lb);
+    const ta = el('textarea', 'wt'); ta.id = 'wx'; ta.rows = it.type === 53 ? 8 : 14; ta.lang = 'ko'; ta.spellcheck = false; ta.value = d.x || '';
+    const cn = counter(it.type, wcount(ta.value));
+    const gjw = el('div', 'gjwrap'); gjw.hidden = !LS.get('topik.gj', false);
+    const drawGj = () => { if (gjw.hidden) return; const { g, used } = gaoji(ta.value, RANGE[it.type][1] + 20); gjw.replaceChildren(el('div', 'gjinfo', '原稿纸预览：每行20格，段首空一格，两个数字/字母占一格。共占 ' + used + ' 格。'), g); };
+    ta.addEventListener('input', () => { cn.upd(wcount(ta.value)); saveDraft(id, { x: ta.value }); drawGj(); });
+    f.append(ta, cn); ab.append(f);
+    const gb = el('button', 'btn sm ghost', gjw.hidden ? '原稿纸预览' : '收起原稿纸'); gb.type = 'button';
+    gb.addEventListener('click', () => { gjw.hidden = !gjw.hidden; LS.set('topik.gj', !gjw.hidden); gb.textContent = gjw.hidden ? '原稿纸预览' : '收起原稿纸'; drawGj(); });
+    const gr = el('div', 'wacts'); gr.append(gb); ab.append(gr, gjw); drawGj();
+    getAns = () => ta.value;
+  }
+  const acts = el('div', 'wacts');
+  const slot = el('span'); slot.dataset.aislot = 'item'; fillAiSlot(slot); acts.append(slot);
+  const mb = el('button', 'btn' + (wopen[id] ? ' on' : ''), wopen[id] ? '收起参考答案' : '对照参考答案'); mb.type = 'button'; mb.dataset.act = 'wmodel'; acts.append(mb);
+  const cl = el('button', 'btn sm ghost', '清空'); cl.type = 'button'; cl.dataset.act = 'wclear'; acts.append(cl);
+  const sv = el('span', 'sv'); sv.id = 'wsaved'; sv.textContent = d.t ? '草稿已保存' : ''; acts.append(sv);
+  ab.append(acts); card.append(ab);
+  wcur.getAns = getAns;
+  // AI feedback (current run or the last saved one)
+  const aiBox = el('section', 'ai'); aiBox.id = 'aibox'; aiBox.hidden = true; card.append(aiBox);
+  if (aiRun && aiRun.id === id) showAiRun(aiBox); else if (S.wfb[id]) showSavedFb(aiBox, it);
+  // model answer
+  const mdl = el('section', 'model'); mdl.id = 'model'; mdl.hidden = !wopen[id]; mdl.dataset.src = src;
+  mdl.append(el('div', 'lab', it.type <= 52 ? '参考答案' : '参考范文（' + it.len + ' 字）'));
+  if (it.type <= 52) {
+    it.a.forEach((a, i) => {
+      const r = el('div'); const p = el('div', 'ko'); p.append(el('span', 'mk2', i ? '㉡ ' : '㉠ ')); p.append(para(a.t, src, '', 'span')); r.append(p, zhLine(a.z));
+      if (a.v.length > 1) { const al = el('div', 'alt', '也可以：'); a.v.slice(1).forEach((v, j) => { if (j) al.append(' / '); al.append(el('span', '', v)); }); r.append(al); }
+      mdl.append(r);
+    });
+  } else {
+    const body = el('div', 'ko'); it.m.forEach(m => { body.append(para(m.t, src)); body.append(zhLine(m.z)); }); mdl.append(body);
+  }
+  mdl.append(el('div', 'lab', '解析'), noteBlock(it.n));
+  if (it.x.length) { const xs = el('div', 'xchips'); it.x.forEach(([k, z]) => { const sp = el('span'); sp.append(el('b', '', k), z); xs.append(sp); }); mdl.append(el('div', 'lab', '关键表达'), xs); }
+  card.append(mdl);
+  const g = W.guide[it.type]; if (g) { const det = el('details', 'guide'); det.append(el('summary', '', '第' + it.type + '题 题型攻略'), noteBlock(g.n)); card.append(det); }
+  // prev / next
+  const same = W.items.filter(x => x.type === it.type); const k = same.indexOf(it); const all = W.items; const ka = all.indexOf(it);
+  const nav = el('div', 'qnav');
+  const prev = el('a', 'btn', '← 上一题'); if (ka > 0) prev.href = '#w/' + all[ka - 1].id; else prev.setAttribute('aria-disabled', 'true');
+  const next = el('a', 'btn pri', ka < all.length - 1 ? (k < same.length - 1 ? '下一题 →' : '下一题型：第' + all[ka + 1].type + '题 →') : '回到写作首页 →'); next.href = ka < all.length - 1 ? '#w/' + all[ka + 1].id : '#write';
+  nav.append(prev, next); card.append(nav);
+}
+
+/* AI feedback */
+function aiPrompt(it, ans) {
+  const W = { 51: '实用文填空', 52: '说明文填空', 53: '图表说明文', 54: '议论文' };
+  const L = ['你是 TOPIK II 写作阅卷老师。学生的母语是中文，韩语写作基础比较弱。请用简体中文批改，具体指出问题，语气鼓励。', ''];
+  L.push('【题型】第' + it.type + '题（' + W[it.type] + '，满分' + FULL[it.type] + '分' + (RANGE[it.type] ? '，要求' + RANGE[it.type][0] + '～' + RANGE[it.type][1] + '字' : '') + '）');
+  L.push('【题目说明】' + plain(it.ins));
+  if (it.k.length) L.push('【题目内容】\n' + it.k.map(k => plain(k.t)).join('\n'));
+  if (it.l.length) L.push(it.l.map(l => '• ' + plain(l.t)).join('\n'));
+  if (it.chart) L.push('【图表内容】\n' + chartPlain(it.chart));
+  if (it.type <= 52) {
+    L.push('【参考答案】\n㉠ ' + it.a[0].v.join(' / ') + '\n㉡ ' + it.a[1].v.join(' / '));
+    L.push('【学生作答】\n㉠ ' + ((ans[0] || '').trim() || '（未作答）') + '\n㉡ ' + ((ans[1] || '').trim() || '（未作答）'));
+    L.push('', '评分标准：每空5分。意思符合上下文、语法正确、文体正确（' + (it.type === 51 ? '51题用“-(스)ㅂ니다”等正式敬语' : '52题用“-다”体') + '）才给满分；意思对但语法或文体有错扣1～3分。参考答案只是示例，意思合适的其他写法同样给分。');
+    L.push('请严格按下面的格式输出，不要使用 Markdown 符号（不要用 #、*、表格）：\n【得分】㉠ x/5，㉡ x/5\n【㉠ 点评】内容是否符合上下文、文体是否正确、有什么语法错误\n【㉠ 修改】改好的句子（如果已经很好就写原句）\n【㉡ 点评】……\n【㉡ 修改】……\n【小贴士】一句话说明这类题下次要注意什么');
+  } else {
+    const n = wcount(ans);
+    L.push('【参考范文】（仅供参考，学生不必写得一样）\n' + it.m.map(m => m.ko).join('\n'));
+    L.push('【学生作答】（' + n + '字）\n' + (ans.trim() || '（未作答）'));
+    const rub = it.type === 53 ? '内容及任务完成 x/7，文章结构 x/7，语言使用 x/16' : '内容及任务完成 x/12，文章结构 x/12，语言使用 x/26';
+    L.push('', '请按 TOPIK 评分标准（' + rub.replace(/ x/g, '') + '）评分。字数不在要求范围内要扣分；' + (it.type === 53 ? '53题不应写个人观点，图表信息不能漏写或写错。' : '54题要回答题目里的每个问题，开头、正文、结尾结构要清楚，不能照抄题目。') + '全文应使用“-다”体（한다체）。');
+    L.push('请严格按下面的格式输出，不要使用 Markdown 符号（不要用 #、*、表格）：\n【估计得分】x/' + FULL[it.type] + '（' + rub + '）——一句话总评\n【主要问题】逐条列出，最多8条，每条一行：原句 → 修改 ｜ 原因\n【修改后的全文】保留学生的意思和结构，改成通顺、地道的书面语，段落之间空一行\n【可以学的表达】2～3个，每个一行：韩语表达 ｜ 中文意思\n如果学生几乎没写，就直接说明，并给出写作思路和开头的第一句示范。');
+  }
+  return L.join('\n');
+}
+function renderAiText(node, text) {
+  node.replaceChildren();
+  text.split('\n').forEach(line => {
+    const m = line.match(/^(【[^】]+】)(.*)$/);
+    if (m) { const d = el('div', 'ah'); d.append(m[1]); if (m[2].trim()) { d.append(' '); const sp = el('span'); sp.style.fontWeight = '400'; sp.style.color = 'var(--ink)'; sp.textContent = m[2].trim(); d.append(sp); } node.append(d); return; }
+    if (!line.trim()) { node.append(el('div', '', ' ')); return; }
+    const hang = (line.match(/[가-힣]/g) || []).length; const d = el('div', hang > line.length * 0.4 ? 'kl' : '', line); node.append(d);
+  });
+}
+function fmtTime(t) { const d = new Date(t); const p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); }
+function showSavedFb(box, it) {
+  const fb = S.wfb[it.id]; if (!fb || !fb.x) return;
+  box.hidden = false; box.replaceChildren();
+  const hd = el('div', 'ahd'); hd.append(el('span', 'lab', 'AI 批改'), '上次批改：' + fmtTime(fb.t));
+  const cur2 = JSON.stringify(wcur && wcur.getAns ? wcur.getAns() : null);
+  if (fb.s && cur2 !== fb.s) hd.append(el('span', 'tag', '作答已修改，可以重新批改'));
+  box.append(hd); const out = el('div', 'out'); renderAiText(out, fb.x); box.append(out);
+}
+function showAiRun(box) {
+  box.hidden = false; box.replaceChildren();
+  const hd = el('div', 'ahd'); hd.append(el('span', 'lab', 'AI 批改'));
+  const st = el('button', 'btn sm', '停止'); st.type = 'button'; st.dataset.act = 'wstop'; hd.append(st); box.append(hd);
+  const out = el('div', 'out'); if (aiRun.text) renderAiText(out, aiRun.text); else out.append(el('div', 'thinking', '正在批改…（第一次使用时，Claude 会先询问是否允许本页面使用你的 Claude 用量）'));
+  box.append(out); aiRun.node = out; aiRun.box = box;
+}
+const AI_ERR = {
+  rate_limited: '请求太频繁，或已达到你的 Claude 用量上限，请稍后再试。',
+  session_expired: '登录已过期，请重新登录 claude.ai 后再试。',
+  refused: '这次没有得到批改结果，请修改作答后再试。',
+  empty_completion: '这次没有得到批改结果，请修改作答后再试。',
+  prompt_too_large: '作答太长了，请删减后再试。'
+};
+async function runAi() {
+  if (!wcur || !SAMPLE || aiRun) return;
+  const { id, it } = wcur; const ans = wcur.getAns();
+  const empty = it.type <= 52 ? !ans.some(x => x && x.trim()) : !ans.trim();
+  if (empty) { toast('先写一点再批改吧'); return; }
+  const ctl = new AbortController(); aiRun = { id, ctl, text: '', node: null }; refreshAi();
+  const box = $('#aibox'); if (box) showAiRun(box);
+  try {
+    const { text } = await SAMPLE(aiPrompt(it, ans), { signal: ctl.signal, onText: ({ text }) => { aiRun.text = text; if (aiRun.node && aiRun.node.isConnected) renderAiText(aiRun.node, text); } });
+    S.wfb[id] = { x: text, t: Date.now(), s: JSON.stringify(ans) }; pruneFb(S.wfb); persist('wfb');
+    aiRun = null; refreshAi();
+    if (wcur && wcur.id === id) { const b = $('#aibox'); if (b) showSavedFb(b, it); }
+  } catch (e) {
+    const code = e && e.code; const partial = e && e.text; aiRun = null;
+    if (['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'].includes(code)) SAMPLE = null;
+    refreshAi();
+    const b = wcur && wcur.id === id ? $('#aibox') : null; if (!b) return;
+    if (code === 'cancelled') { if (partial) { b.querySelector('.ahd .btn') && b.querySelector('.ahd .btn').remove(); b.append(el('div', 'wnote', '已停止。')); } else { b.hidden = true; if (S.wfb[id]) showSavedFb(b, it); } return; }
+    const hd = b.querySelector('.ahd .btn'); if (hd) hd.remove();
+    if (!partial) { const out = b.querySelector('.out'); if (out) out.replaceChildren(); }
+    const msg = SAMPLE === null ? '没有获得使用 Claude 的许可，AI 批改在本次打开期间不可用。可以对照参考答案自己检查。' : (AI_ERR[code] || '网络或服务出错，可以再点一次「AI 批改」。');
+    b.append(el('div', 'err', msg));
+  }
+}
+
+/* drills: spoken → written style */
+function normS(s) { return (s || '').replace(/\s+/g, ' ').trim().replace(/[.。!！?？]+$/, '').trim(); }
+function drillCheck(d, v) {
+  const n = normS(v); if (!n) return null;
+  if (d.a.some(a => normS(a) === n)) return 'ok';
+  const ns = n.replace(/\s/g, ''); if (d.a.some(a => normS(a).replace(/\s/g, '') === ns)) return 'space';
+  return 'bad';
+}
+function drillHint(v) {
+  const n = normS(v);
+  if (/(요|죠)$/.test(n)) return '句尾还是“-요”体，要改成“-다”体。';
+  if (/(습니다|ㅂ니다|십시오|니까)$/.test(n)) return '“-습니다”是正式口语和实用文用的，52–54题要用“-다”体。';
+  if (/(^|\s)(저는|제가|저도|저희)/.test(n)) return '文章里不用“저/제가/저희”，改成“나/내가/우리”或省略。';
+  return '';
+}
+async function renderDrill() {
+  setNav('write'); const W = await loadWrite(); view.replaceChildren();
+  const top = el('section', 'wtop');
+  const back = el('a', 'btn sm ghost', '← 写作练习'); back.href = '#write'; back.style.justifySelf = 'start'; top.append(back);
+  top.append(el('h1', '', '文体转换练习'));
+  top.append(el('p', 'muted', '52–54 题必须用文章体“-다”（한다체）。把下面的口语句子改写成书面语，按回车或点“检查”。答案可能不止一种，你的写法如果也对，可以点“我的也对”。'));
+  const done = W.drill.filter(d => (S.write['d:' + d.id] || {}).ok).length;
+  const tb = el('div', 'toolbar'); tb.append(el('span', 'muted', '已做对 ' + done + '/' + W.drill.length)); tb.append(el('span', 'grow'));
+  const hideOk = LS.get('topik.dhide', false);
+  const hb = el('button', 'btn sm' + (hideOk ? ' on' : ''), hideOk ? '显示全部' : '只看没做对的'); hb.type = 'button';
+  hb.addEventListener('click', () => { LS.set('topik.dhide', !hideOk); renderDrill(); }); tb.append(hb);
+  const rs = el('button', 'btn sm ghost', '清空记录'); rs.type = 'button';
+  rs.addEventListener('click', () => { if (rs.dataset.sure) { W.drill.forEach(d => { if (S.write['d:' + d.id]) S.write['d:' + d.id] = { ok: 0, v: '', t: Date.now() }; }); LS.set('topik.write', S.write); persist('write'); renderDrill(); } else { rs.dataset.sure = 1; rs.textContent = '确定清空？'; setTimeout(() => { if (rs.isConnected) { delete rs.dataset.sure; rs.textContent = '清空记录'; } }, 3000); } });
+  tb.append(rs); top.append(tb); view.append(top);
+  const list = el('div', 'drl'); let shown = 0;
+  W.drill.forEach((d, idx) => {
+    const rec = S.write['d:' + d.id] || {}; if (hideOk && rec.ok) return; shown++;
+    const q = el('div', 'dq' + (rec.ok ? ' done' : '')); q.dataset.src = 'w:drill';
+    const tp = el('div', 'top'); tp.append(el('span', 'no', String(idx + 1))); const ko = el('div', 'ko'); ko.append(para(d.t, 'w:drill', '', 'span')); tp.append(ko); q.append(tp);
+    q.append(zhLine(d.z));
+    const row = el('div', 'in'); const inp = el('input'); inp.type = 'text'; inp.lang = 'ko'; inp.spellcheck = false; inp.setAttribute('autocomplete', 'off'); inp.placeholder = '改写成“-다”体'; inp.value = rec.v || ''; inp.setAttribute('aria-label', '第' + (idx + 1) + '句的书面语写法');
+    const cb = el('button', 'btn', '检查'); cb.type = 'button'; row.append(inp, cb); q.append(row);
+    const res = el('div', 'res'); res.hidden = true; q.append(res);
+    const show = (r, v) => {
+      res.hidden = false; res.className = 'res ' + (r === 'bad' ? 'bad' : 'ok'); res.replaceChildren();
+      if (r === 'ok') res.append(el('div', 't', '✓ 正确'));
+      else if (r === 'space') res.append(el('div', 't', '✓ 基本正确，注意空格（띄어쓰기）'));
+      else { res.append(el('div', 't', '✗ 再看看：' + (drillHint(v) || '和参考答案不一样。'))); }
+      const an = el('div', 'ans'); an.textContent = '参考：' + d.a.join('　/　'); res.append(an);
+      res.append(el('div', 'rule', d.r));
+      if (r === 'bad') { const mine = el('button', 'btn sm ghost', '我的也对'); mine.type = 'button'; mine.addEventListener('click', () => { S.write['d:' + d.id] = { ok: 1, v: inp.value, t: Date.now() }; LS.set('topik.write', S.write); persist('write'); q.classList.add('done'); show('ok', inp.value); }); res.append(mine); }
+    };
+    const check = () => { const r = drillCheck(d, inp.value); if (!r) { inp.focus(); return; } S.write['d:' + d.id] = { ok: r === 'bad' ? 0 : 1, v: inp.value, t: Date.now() }; LS.set('topik.write', S.write); persist('write'); q.classList.toggle('done', r !== 'bad'); show(r, inp.value); };
+    cb.addEventListener('click', check);
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); check(); } });
+    if (rec.v) { const r = drillCheck(d, rec.v); if (r) show(rec.ok && r === 'bad' ? 'ok' : r, rec.v); }
+    list.append(q);
+  });
+  if (!shown) list.append(el('div', 'empty', '全部做对了！'));
+  view.append(list);
+}
+async function renderExpr() {
+  setNav('write'); const W = await loadWrite(); view.replaceChildren();
+  const top = el('section', 'wtop');
+  const back = el('a', 'btn sm ghost', '← 写作练习'); back.href = '#write'; back.style.justifySelf = 'start'; top.append(back);
+  top.append(el('h1', '', '写作常用表达'));
+  top.append(el('p', 'muted', '按题型整理的高分句型。点“☆”可以收进生词本，和阅读里收藏的单词放在一起复习。'));
+  view.append(top);
+  const gs = el('div', 'xgroups');
+  W.expr.forEach(g => {
+    const sec = el('section', 'xg'); sec.append(el('h2', '', g.g));
+    g.e.forEach(([k, z]) => { const r = el('div', 'xe'); const ks = el('span', 'k', k); ks.dataset.src = 'w:expr'; r.append(ks); const zz = el('span', 'z'); zz.append(z, ' '); const sb = starBtn('p', k, z, ks); sb.classList.remove('star'); sb.classList.add('btn', 'sm', 'ghost'); sb.style.marginLeft = '6px'; sb.style.minHeight = '26px'; zz.append(sb); r.append(zz); sec.append(r); });
+    gs.append(sec);
+  });
+  view.append(gs);
+}
+
 /* ---------------- routing & events ---------------- */
 async function route() {
-  hidePop();
+  hidePop(); wcur = null;
   if (!INDEX) return;
   const h = (location.hash || '#home').slice(1);
   let m;
@@ -642,6 +1218,10 @@ async function route() {
     else if ((m = h.match(/^r(\d+)$/)) && ORDER.includes(+m[1])) await renderResult(+m[1]);
     else if (h === 'wrong') { cur = null; await renderWrong(); }
     else if (h === 'vocab') { cur = null; renderVocab(); }
+    else if (h === 'write') { cur = null; await renderWHome(); }
+    else if (h === 'w/drill') { cur = null; await renderDrill(); }
+    else if (h === 'w/expr') { cur = null; await renderExpr(); }
+    else if ((m = h.match(/^w\/(5[1-4]-\w+)$/))) { cur = null; await renderWItem(m[1]); }
     else { cur = null; renderHome(); }
   } catch (err) { view.replaceChildren(el('p', 'loading', '题目文件没有载入成功，请刷新页面再试。')); }
 }
@@ -659,6 +1239,11 @@ document.addEventListener('click', e => {
   const act = t.closest('[data-act]'); if (!act) return;
   const a = act.dataset.act;
   if (a === 'zh') toggleZh();
+  else if (a === 'wzh') toggleWZh();
+  else if (a === 'wai') runAi();
+  else if (a === 'wstop') { if (aiRun) aiRun.ctl.abort(); }
+  else if (a === 'wmodel') { if (!wcur) return; const id = wcur.id; wopen[id] = !wopen[id]; const m = $('#model'); if (m) m.hidden = !wopen[id]; act.classList.toggle('on', !!wopen[id]); act.textContent = wopen[id] ? '收起参考答案' : '对照参考答案'; if (wopen[id] && m) { if (!draft(id).seen) saveDraft(id, { seen: 1 }); m.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); } }
+  else if (a === 'wclear') { if (!wcur) return; if (!act.dataset.sure) { act.dataset.sure = 1; act.textContent = '确定清空？'; setTimeout(() => { if (act.isConnected) { delete act.dataset.sure; act.textContent = '清空'; } }, 3000); return; } const id = wcur.id; saveDraft(id, { a: ['', ''], x: '', o: ['', '', ''] }); renderWItem(id); toast('已清空'); }
   else if (a === 'redo') redo();
   else if (a === 'redoat') { const k = act.dataset.k; S.progress[k] = { c: 0, t: Date.now() }; persist('progress'); refreshCounts(); location.hash = '#e' + k; }
   else if (a === 'reset') { const id = +act.dataset.id; for (let n = 1; n <= 50; n++) if (S.progress[pk(id, n)]) S.progress[pk(id, n)] = { c: 0, t: Date.now() }; persist('progress'); refreshCounts(); location.hash = '#e' + id + '-1'; }
@@ -673,6 +1258,7 @@ document.addEventListener('click', e => {
 document.addEventListener('click', e => { const z = e.target instanceof Element && e.target.closest('.hidezh .zh'); if (z) z.classList.toggle('show'); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { hidePop(); return; }
+  if (wcur && !e.altKey && !e.ctrlKey && !e.metaKey && (e.key === 't' || e.key === 'T') && !/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')) { toggleWZh(); return; }
   if (e.altKey || e.ctrlKey || e.metaKey || !cur) return;
   if (/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')) return;
   if (/^[1-4]$/.test(e.key)) { answer(+e.key); e.preventDefault(); }
@@ -688,7 +1274,7 @@ window.addEventListener('resize', () => { if (!pop.hidden && !touch) hidePop(); 
   // demo sentence from exam 83 Q3
   loadExam(83).then(d => { demoCache = d.qmap[3].q.text[0]; if ((location.hash || '#home') === '#home' || location.hash === '') { const ex = $('.demo .ex'); if (ex && !ex.childNodes.length) ex.append(para(demoCache, '83-3')); } });
   await route();
-  initRemote();
+  initRemote(); initSample();
 })();
 })();
 </script>

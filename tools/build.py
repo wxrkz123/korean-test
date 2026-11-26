@@ -318,6 +318,9 @@ for n in ORDER:
     answerable = sum(1 for g in ex["groups"] for q in g["questions"] if q["answer"])
     index.append({"id": n, "title": TITLES[n], "year": YEARS[n], "count": 50, "answerable": answerable, "zh": ZH is not None,
                   "skip": [q["n"] for g in ex["groups"] for q in g["questions"] if not q["answer"]]})
+from writebuild import build_write
+if os.path.isdir(os.path.join(SRC, "write")):
+    print("write: items %d, drills %d, expressions %d" % build_write(tokenize_para, SRC, OUT, ZH_PROBLEMS))
 G_LIST = [[label, zh] for (_, label, zh) in COMPILED]
 json.dump({"W": W_LIST, "G": G_LIST, "P": P_LIST, "A": A_LIST}, open(f"{OUT}/dict.json", "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
 json.dump(index, open(f"{OUT}/index.json", "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
