@@ -4,7 +4,10 @@
   === <id>                 one item (or one guide section in guide.wr)
   S: source label (zh)     H: Korean title   HZ: Chinese title
   I: Korean instruction    IZ: its Chinese   (51/52 default to the standard instruction)
-  K: passage/prompt line   KZ: its Chinese (must follow the K); 'K: # text' marks a heading line
+  K: passage/prompt line   KZ: its Chinese (must follow the K); 'K: # text' heading, 'K: ^ text' small meta line
+     (board name, author), 'K: > text' a message from the other party (text-message layouts); for 53 with an
+     image, K lines transcribe the chart text so it can be looked up
+  G: image path (53 chart cropped from the paper), relative to the site root
   L: bullet question (54)  LZ: its Chinese
   C: chart spec (one-line JSON, 53)          CZ: Chinese description of the chart
   A: answer for blank (51/52: first A = ㉠, second = ㉡), variants separated by ' | '   AZ: Chinese of the first variant
@@ -34,7 +37,7 @@ def parse_wr(path):
             cur = {"id": m.group(1), "K": [], "L": [], "A": [], "M": [], "N": [], "X": [], "CZ": []}
             items.append(cur)
             continue
-        m = re.match(r"^(KZ|LZ|AZ|MZ|HZ|IZ|CZ|K|L|A|M|N|X|S|H|I|C|P):\s?(.*)$", l)
+        m = re.match(r"^(KZ|LZ|AZ|MZ|HZ|IZ|CZ|K|L|A|M|N|X|S|H|I|C|P|G):\s?(.*)$", l)
         if not m or cur is None:
             raise ValueError(f"{path}:{no}: bad line {l!r}")
         k, v = m.group(1), m.group(2).strip()
@@ -121,7 +124,7 @@ def build_write(tok, src_dir, out_dir, problems):
                 if not it.get(k):
                     problems.append(f"{where}: missing {k}")
             spec = None
-            src_strings = [x["ko"] for x in it["K"] + it["L"] + it["M"]] + [ins or ""]
+            src_strings = [re.sub(r"^[#^>] ", "", x["ko"]) for x in it["K"]] + [x["ko"] for x in it["L"] + it["M"]] + [ins or ""]
             for a in it["A"]:
                 src_strings += [v.strip() for v in a["ko"].split(" | ")]
             if it.get("C"):
@@ -139,8 +142,10 @@ def build_write(tok, src_dir, out_dir, problems):
                 for mk in "㉠㉡":
                     if f"({mk})" not in body:
                         problems.append(f"{where}: passage lacks ({mk})")
-            if t == 53 and spec is None:
-                problems.append(f"{where}: 53 needs a chart (C:)")
+            if t == 53 and spec is None and not it.get("G"):
+                problems.append(f"{where}: 53 needs a chart (C:) or an image (G:)")
+            if it.get("G") and not os.path.exists(os.path.join(os.path.dirname(src_dir), it["G"])):
+                problems.append(f"{where}: image not found: {it['G']}")
             if t == 54 and len(it["L"]) < 2:
                 problems.append(f"{where}: 54 needs at least 2 L bullet lines")
             count = sum(len(x["ko"]) for x in it["M"])
@@ -158,11 +163,11 @@ def build_write(tok, src_dir, out_dir, problems):
             check_quotes(where, it["N"], " ".join(src_strings), problems)
             K = []
             for x in it["K"]:
-                hd = x["ko"].startswith("# ")
-                ko = x["ko"][2:] if hd else x["ko"]
+                kind = {"# ": "hd", "^ ": "mt", "> ": "rx"}.get(x["ko"][:2])
+                ko = x["ko"][2:] if kind else x["ko"]
                 o = {"t": tok(ko), "z": x.get("zh", "")}
-                if hd:
-                    o["hd"] = 1
+                if kind:
+                    o[kind] = 1
                 K.append(o)
             out = {
                 "id": it["id"], "type": t, "src": it.get("S", ""), "h": it.get("H", ""), "hz": it.get("HZ", ""),
@@ -173,6 +178,8 @@ def build_write(tok, src_dir, out_dir, problems):
                 "m": [{"t": tok(x["ko"]), "z": x.get("zh", ""), "ko": x["ko"]} for x in it["M"]],
                 "n": it["N"], "x": [x.split(" | ", 1) for x in it["X"]], "len": count,
             }
+            if it.get("G"):
+                out["img"] = it["G"]
             if spec is not None:
                 out["chart"] = _tok_spec(spec, tok)
                 out["cz"] = it["CZ"]

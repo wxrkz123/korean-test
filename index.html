@@ -224,6 +224,17 @@ details.guide .expd{margin-top:8px;padding-top:8px;font-size:14.5px}
 .notice .hd{text-align:center;font-weight:700}
 .wbk{display:inline-block;min-width:5.5em;padding:0 .4em;border-bottom:2px solid var(--accent);color:var(--accent);font-weight:600;text-align:center;line-height:1.5;text-indent:0}
 .wbk.filled{min-width:0;font-weight:500;color:var(--ink);background:var(--accent-soft);border-radius:4px 4px 0 0;text-align:left}
+.wbk.ans{background:var(--ok-bg);border-bottom-color:var(--ok)}
+.notice p.mt{font-family:var(--f-ui);font-size:13px;color:var(--muted)}
+.notice p.rx{background:var(--soft);border-radius:10px;padding:2px 12px;margin-right:12%}
+.ctext{border:1px dashed var(--line);border-radius:10px;padding:10px 14px}
+.ctext .clab{font-size:12.5px;color:var(--muted);margin-bottom:2px}
+.ctext .ko{font-size:16px;line-height:1.8}
+.ctext p.hd{font-weight:700;margin-top:6px}
+details.practice{border-top:1px dashed var(--line);padding-top:14px}
+details.practice>summary{cursor:pointer;font-weight:600;color:var(--accent);width:max-content;max-width:100%}
+.practice .ansbox{border-top:0;padding-top:12px}
+.practice .ai{margin-top:12px}
 .bullets{margin:8px 0 0;padding-left:1.3em}
 .bullets li+li{margin-top:2px}
 .ansbox{display:grid;gap:14px;border-top:1px dashed var(--line);padding-top:16px}
@@ -862,14 +873,14 @@ function gaoji(text, minCells) {
 /* writing home */
 function itemStatus(it) {
   if (S.wfb[it.id]) return ['AI 已批改', 'ok'];
-  if (it.type <= 52) { const a = draft(it.id).a || []; const k = a.filter(x => x && x.trim()).length; return k ? ['已填 ' + k + '/2', ''] : ['未写', '']; }
-  const n = wcount(draft(it.id).x); return n ? ['草稿 ' + n + ' 字', ''] : ['未写', ''];
+  if (it.type <= 52) { const a = draft(it.id).a || []; const k = a.filter(x => x && x.trim()).length; return k ? ['已练习 ' + k + '/2', ''] : ['', '']; }
+  const n = wcount(draft(it.id).x); return n ? ['草稿 ' + n + ' 字', ''] : ['', ''];
 }
 async function renderWHome() {
   setNav('write'); const W = await loadWrite(); view.replaceChildren();
   const top = el('section', 'wtop');
   top.append(el('h1', '', 'TOPIK II 写作练习'));
-  top.append(el('p', 'muted', '第37回 TOPIK II 写作真题 51–54 题（上传的 PDF 中只有第37回附带写作部分）。题目里的单词同样可以悬停/点按查中文；写的内容自动保存。'));
+  top.append(el('p', 'muted', '第35、37、64、83、91、96回 TOPIK II 写作真题，51–54 题各 6 道。每题直接给出参考答案或范文、中文翻译和解析（参考答案是自己写的，不是官方答案）；想动笔时可以展开“自己练习写一遍”。题目里的单词同样可以悬停/点按查中文。'));
   const ai = el('p', 'wnote'); ai.dataset.aislot = 'home'; fillAiSlot(ai); top.append(ai);
   view.append(top);
   const ts = el('div', 'wtypes');
@@ -894,7 +905,7 @@ async function renderWHome() {
 function fillAiSlot(n) {
   const kind = n.dataset.aislot;
   if (kind === 'home') {
-    n.textContent = SAMPLE === undefined ? '' : SAMPLE ? '写完可以点「AI 批改」：Claude 会按 TOPIK 评分标准估分、逐句指出问题，并给出修改后的全文。每次批改会用到你自己的 Claude 用量。' : 'AI 批改需要在 Claude 里打开本页面才能使用；在这里可以对照参考答案和解析自己检查。';
+    n.textContent = SAMPLE === undefined ? '' : SAMPLE ? '自己写完后可以点「AI 批改」：Claude 会按 TOPIK 评分标准估分、逐句指出问题，并给出修改后的全文。每次批改会用到你自己的 Claude 用量。' : '';
     return;
   }
   n.replaceChildren();
@@ -908,7 +919,6 @@ function toggleWZh() { if (!wcur) return; LS.set('topik.zh', !LS.get('topik.zh',
 function blanksIn(node) {
   node.querySelectorAll('.mk').forEach(m => { const mt = m.textContent.match(/^\((㉠|㉡)\)(.*)$/); if (!mt) return; const b = el('span', 'wbk', mt[1]); b.dataset.mk = mt[1] === '㉠' ? 0 : 1; m.replaceWith(b, mt[2]); });
 }
-function syncBlanks(vals) { document.querySelectorAll('.wbk').forEach(b => { const v = (vals[+b.dataset.mk] || '').trim(); b.textContent = v || (b.dataset.mk === '0' ? '㉠' : '㉡'); b.classList.toggle('filled', !!v); }); }
 function autoGrow(t) { t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight + 2, window.innerHeight * 0.8) + 'px'; }
 function counter(t, n) {
   const [lo, hi] = RANGE[t]; const c = el('div', 'cnt'); c.id = 'wcnt';
@@ -935,28 +945,54 @@ async function renderWItem(id) {
   const ins = el('div', 'ins'); ins.dataset.src = src; ins.append('※ [' + it.type + '] '); fill(ins, it.ins); card.append(ins);
   if (zhOn) { const z = zhLine(it.insZh); z.style.marginTop = '-10px'; card.append(z); }
   if (it.type === 51) {
-    const nb = el('div', 'ko notice'); it.k.forEach(k => { nb.append(para(k.t, src, k.hd ? 'hd' : '')); if (zhOn) { const z = zhLine(k.z); if (k.hd) z.style.textAlign = 'center'; nb.append(z); } }); card.append(nb);
+    const nb = el('div', 'ko notice');
+    it.k.forEach(k => { nb.append(para(k.t, src, k.hd ? 'hd' : k.mt ? 'mt' : k.rx ? 'rx' : '')); if (zhOn) { const z = zhLine(k.z); if (k.hd) z.style.textAlign = 'center'; nb.append(z); } });
+    card.append(nb);
   } else if (it.type === 52) {
     const ps = el('div', 'ko passage'); it.k.forEach(k => { ps.append(para(k.t, src)); if (zhOn) ps.append(zhLine(k.z)); }); card.append(ps);
   } else if (it.type === 53) {
-    card.append(renderChart(it.chart)); if (zhOn) it.cz.forEach(z => card.append(zhLine(z)));
+    if (it.img) { const f = el('figure', 'chart'); f.style.margin = '0'; const im = el('img'); im.src = it.img; im.alt = '第53题图表：' + it.k.map(k => plain(k.t)).join('；'); f.append(im); card.append(f); }
+    if (it.chart) card.append(renderChart(it.chart));
+    if (it.img && it.k.length) { const tx = el('div', 'ctext'); tx.append(el('div', 'clab', '图表中的文字（可查词）')); const ko = el('div', 'ko'); it.k.forEach(k => { ko.append(para(k.t, src, k.hd ? 'hd' : '')); if (zhOn) ko.append(zhLine(k.z)); }); tx.append(ko); card.append(tx); }
+    if (zhOn) (it.cz || []).forEach(z => card.append(zhLine(z)));
   } else {
     const bx = el('div', 'ko boxed'); it.k.forEach(k => { bx.append(para(k.t, src)); if (zhOn) bx.append(zhLine(k.z)); });
     const ul = el('ul', 'bullets'); it.l.forEach(l => { const li = el('li'); li.append(para(l.t, src, '', 'span')); if (zhOn) li.append(zhLine(l.z)); ul.append(li); }); bx.append(ul); card.append(bx);
   }
   blanksIn(card);
-  // answer area
+  if (it.type <= 52) card.querySelectorAll('.wbk').forEach(bk => { const a = it.a[+bk.dataset.mk]; if (a) { bk.textContent = a.v[0]; bk.classList.add('filled', 'ans'); bk.title = '参考答案'; } });
+  // reference answer, explanation and key expressions: shown right away
+  const mdl = el('section', 'model'); mdl.dataset.src = src;
+  mdl.append(el('div', 'lab', it.type <= 52 ? '参考答案' : '参考范文（' + it.len + ' 字）'));
+  if (it.type <= 52) {
+    it.a.forEach((a, i) => {
+      const r = el('div'); const p = el('div', 'ko'); p.append(el('span', 'mk2', i ? '㉡ ' : '㉠ ')); p.append(para(a.t, src, '', 'span')); r.append(p, zhLine(a.z));
+      if (a.v.length > 1) { const al = el('div', 'alt', '也可以：'); a.v.slice(1).forEach((v, j) => { if (j) al.append(' / '); al.append(el('span', '', v)); }); r.append(al); }
+      mdl.append(r);
+    });
+  } else {
+    const body = el('div', 'ko'); it.m.forEach(m => { body.append(para(m.t, src)); body.append(zhLine(m.z)); }); mdl.append(body);
+  }
+  mdl.append(el('div', 'lab', '解析'), noteBlock(it.n));
+  if (it.x.length) { const xs = el('div', 'xchips'); it.x.forEach(([k, z]) => { const sp = el('span'); sp.append(el('b', '', k), z); xs.append(sp); }); mdl.append(el('div', 'lab', '关键表达'), xs); }
+  card.append(mdl);
+  const g = W.guide[it.type]; if (g) { const det = el('details', 'guide'); det.append(el('summary', '', '第' + it.type + '题 题型攻略'), noteBlock(g.n)); card.append(det); }
+  // optional: write it yourself
+  const pr = el('details', 'practice'); pr.open = !!(wopen[id] || hasDraft(it) || S.wfb[id] || (aiRun && aiRun.id === id));
+  pr.addEventListener('toggle', () => { wopen[id] = pr.open; });
+  pr.append(el('summary', '', '自己练习写一遍（可选）'));
   const ab = el('section', 'ansbox'); ab.setAttribute('aria-label', '作答区');
   let getAns;
   if (it.type <= 52) {
     const vals = (d.a || ['', '']).slice(); const tas = [];
     ['㉠', '㉡'].forEach((mk, i) => {
-      const f = el('div', 'field'); const lb = el('label'); lb.htmlFor = 'wa' + i; lb.append(el('span', 'mk2', mk), it.type === 51 ? '写一个完整的句子（“-습니다”体）' : '写一个完整的句子（“-다”体）'); f.append(lb);
+      const f = el('div', 'field'); const lb = el('label'); lb.htmlFor = 'wa' + i; lb.append(el('span', 'mk2', mk), '填入空格的内容'); f.append(lb);
       const ta = el('textarea', 'wt'); ta.id = 'wa' + i; ta.rows = 2; ta.value = vals[i] || ''; ta.lang = 'ko'; ta.spellcheck = false; ta.setAttribute('autocomplete', 'off');
-      ta.addEventListener('input', () => { vals[i] = ta.value; syncBlanks(vals); autoGrow(ta); saveDraft(id, { a: vals.slice() }); });
+      ta.addEventListener('input', () => { vals[i] = ta.value; autoGrow(ta); saveDraft(id, { a: vals.slice() }); });
       f.append(ta); ab.append(f); tas.push(ta);
     });
-    syncBlanks(vals); requestAnimationFrame(() => tas.forEach(autoGrow));
+    pr.addEventListener('toggle', () => { if (pr.open) tas.forEach(autoGrow); });
+    if (pr.open) requestAnimationFrame(() => tas.forEach(autoGrow));
     getAns = () => vals.slice();
   } else {
     if (it.type === 54) {
@@ -985,30 +1021,14 @@ async function renderWItem(id) {
   }
   const acts = el('div', 'wacts');
   const slot = el('span'); slot.dataset.aislot = 'item'; fillAiSlot(slot); acts.append(slot);
-  const mb = el('button', 'btn' + (wopen[id] ? ' on' : ''), wopen[id] ? '收起参考答案' : '对照参考答案'); mb.type = 'button'; mb.dataset.act = 'wmodel'; acts.append(mb);
   const cl = el('button', 'btn sm ghost', '清空'); cl.type = 'button'; cl.dataset.act = 'wclear'; acts.append(cl);
   const sv = el('span', 'sv'); sv.id = 'wsaved'; sv.textContent = d.t ? '草稿已保存' : ''; acts.append(sv);
-  ab.append(acts); card.append(ab);
+  ab.append(acts); pr.append(ab);
   wcur.getAns = getAns;
   // AI feedback (current run or the last saved one)
-  const aiBox = el('section', 'ai'); aiBox.id = 'aibox'; aiBox.hidden = true; card.append(aiBox);
+  const aiBox = el('section', 'ai'); aiBox.id = 'aibox'; aiBox.hidden = true; pr.append(aiBox);
   if (aiRun && aiRun.id === id) showAiRun(aiBox); else if (S.wfb[id]) showSavedFb(aiBox, it);
-  // model answer
-  const mdl = el('section', 'model'); mdl.id = 'model'; mdl.hidden = !wopen[id]; mdl.dataset.src = src;
-  mdl.append(el('div', 'lab', it.type <= 52 ? '参考答案' : '参考范文（' + it.len + ' 字）'));
-  if (it.type <= 52) {
-    it.a.forEach((a, i) => {
-      const r = el('div'); const p = el('div', 'ko'); p.append(el('span', 'mk2', i ? '㉡ ' : '㉠ ')); p.append(para(a.t, src, '', 'span')); r.append(p, zhLine(a.z));
-      if (a.v.length > 1) { const al = el('div', 'alt', '也可以：'); a.v.slice(1).forEach((v, j) => { if (j) al.append(' / '); al.append(el('span', '', v)); }); r.append(al); }
-      mdl.append(r);
-    });
-  } else {
-    const body = el('div', 'ko'); it.m.forEach(m => { body.append(para(m.t, src)); body.append(zhLine(m.z)); }); mdl.append(body);
-  }
-  mdl.append(el('div', 'lab', '解析'), noteBlock(it.n));
-  if (it.x.length) { const xs = el('div', 'xchips'); it.x.forEach(([k, z]) => { const sp = el('span'); sp.append(el('b', '', k), z); xs.append(sp); }); mdl.append(el('div', 'lab', '关键表达'), xs); }
-  card.append(mdl);
-  const g = W.guide[it.type]; if (g) { const det = el('details', 'guide'); det.append(el('summary', '', '第' + it.type + '题 题型攻略'), noteBlock(g.n)); card.append(det); }
+  card.append(pr);
   // prev / next
   const same = W.items.filter(x => x.type === it.type); const k = same.indexOf(it); const all = W.items; const ka = all.indexOf(it);
   const nav = el('div', 'qnav');
@@ -1133,7 +1153,6 @@ document.addEventListener('click', e => {
   else if (a === 'wzh') toggleWZh();
   else if (a === 'wai') runAi();
   else if (a === 'wstop') { if (aiRun) aiRun.ctl.abort(); }
-  else if (a === 'wmodel') { if (!wcur) return; const id = wcur.id; wopen[id] = !wopen[id]; const m = $('#model'); if (m) m.hidden = !wopen[id]; act.classList.toggle('on', !!wopen[id]); act.textContent = wopen[id] ? '收起参考答案' : '对照参考答案'; if (wopen[id] && m) { if (!draft(id).seen) saveDraft(id, { seen: 1 }); m.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); } }
   else if (a === 'wclear') { if (!wcur) return; if (!act.dataset.sure) { act.dataset.sure = 1; act.textContent = '确定清空？'; setTimeout(() => { if (act.isConnected) { delete act.dataset.sure; act.textContent = '清空'; } }, 3000); return; } const id = wcur.id; saveDraft(id, { a: ['', ''], x: '', o: ['', '', ''] }); renderWItem(id); toast('已清空'); }
   else if (a === 'redo') redo();
   else if (a === 'redoat') { const k = act.dataset.k; S.progress[k] = { c: 0, t: Date.now() }; persist('progress'); refreshCounts(); location.hash = '#e' + k; }
